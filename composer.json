@@ -1,0 +1,33 @@
+{
+  "name": "spiral/roadrunner-metrics",
+  "type": "server",
+  "description": "RoadRunner: Prometheus metrics RPC",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Anton Titov / Wolfy-J",
+      "email": "wolfy.jd@gmail.com"
+    },
+    {
+      "name": "RoadRunner Community",
+      "homepage": "https://github.com/spiral/roadrunner/graphs/contributors"
+    }
+  ],
+  "minimum-stability": "beta",
+  "require": {
+    "php": ">=7.4",
+    "spiral/roadrunner": ">=2.0"
+  },
+  "require-dev": {
+    "phpstan/phpstan": "~0.12",
+    "phpunit/phpunit": "~8.0"
+  },
+  "scripts": {
+    "analyze": "phpstan analyze -c ./phpstan.neon.dist --no-progress --ansi"
+  },
+  "autoload": {
+    "psr-4": {
+      "Spiral\\RoadRunner\\Metrics\\": "src/"
+    }
+  }
+}
