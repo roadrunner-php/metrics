@@ -1,7 +1,10 @@
 <?php
 
 /**
- * High-performance PHP process supervisor and load balancer written in Go. Http core.
+ * This file is part of RoadRunner package.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 declare(strict_types=1);
@@ -17,7 +20,7 @@ interface MetricsInterface
      *
      * @param string $name
      * @param float $value
-     * @param mixed[] $labels
+     * @param array $labels
      *
      * @throws MetricsException
      */
@@ -28,7 +31,7 @@ interface MetricsInterface
      *
      * @param string $name
      * @param float $value
-     * @param mixed[] $labels
+     * @param array $labels
      *
      * @throws MetricsException
      */
@@ -39,7 +42,7 @@ interface MetricsInterface
      *
      * @param string $name
      * @param float $value
-     * @param mixed[] $labels
+     * @param array $labels
      *
      * @throws MetricsException
      */
@@ -50,7 +53,7 @@ interface MetricsInterface
      *
      * @param string $name
      * @param float $value
-     * @param mixed[] $labels
+     * @param array $labels
      *
      * @throws MetricsException
      */
@@ -60,9 +63,9 @@ interface MetricsInterface
      * Declares named collector.
      *
      * @param string $name
-     * @param Collector $collector
+     * @param CollectorInterface $collector
      *
      * @throws MetricsException
      */
-    public function declare(string $name, Collector $collector): void;
+    public function declare(string $name, CollectorInterface $collector): void;
 }
