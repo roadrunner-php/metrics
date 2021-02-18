@@ -1,93 +1,140 @@
 <?php
 
 /**
- * High-performance PHP process supervisor and load balancer written in Go. Http core.
+ * This file is part of RoadRunner package.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Spiral\RoadRunner\Metrics;
 
-final class Collector implements \JsonSerializable
-{
-    public const HISTOGRAM = 'histogram';
-    public const GAUGE = 'gauge';
-    public const COUNTER = 'counter';
+use JetBrains\PhpStorm\ExpectedValues;
+use JetBrains\PhpStorm\Pure;
+use JsonSerializable;
 
-    private string $namespace = '';
-    private string $subsystem = '';
+/**
+ * @psalm-import-type CollectorType from CollectorInterface
+ * @psalm-import-type ArrayFormatType from CollectorInterface
+ */
+final class Collector implements CollectorInterface, JsonSerializable
+{
+    /**
+     * @var CollectorType
+     */
+    #[ExpectedValues(valuesFromClass: self::class)]
     private string $type;
+
+    /**
+     * @var string
+     */
+    private string $namespace = '';
+
+    /**
+     * @var string
+     */
+    private string $subsystem = '';
+
+    /**
+     * @var string
+     */
     private string $help = '';
+
+    /**
+     * @var array<array-key, string>
+     */
     private array $labels = [];
+
+    /**
+     * @var array<array-key, float>
+     */
     private array $buckets = [];
 
     /**
-     * @param string $type
+     * @param CollectorType $type
      */
-    private function __construct(string $type)
-    {
+    private function __construct(
+        #[ExpectedValues(valuesFromClass: self::class)]
+        string $type
+    ) {
         $this->type = $type;
     }
 
     /**
-     * @param string $namespace
-     * @return $this
+     * {@inheritDoc}
      */
-    public function withNamespace(string $namespace): self
-    {
-        $c = clone $this;
-        $c->namespace = $namespace;
+    #[Pure]
+    public function withNamespace(
+        string $namespace
+    ): self {
+        $self = clone $this;
+        $self->namespace = $namespace;
 
-        return $c;
+        return $self;
     }
 
     /**
-     * @param string $subsystem
-     * @return $this
+     * {@inheritDoc}
      */
-    public function withSubsystem(string $subsystem): self
-    {
-        $c = clone $this;
-        $c->subsystem = $subsystem;
+    #[Pure]
+    public function withSubsystem(
+        string $subsystem
+    ): self {
+        $self = clone $this;
+        $self->subsystem = $subsystem;
 
-        return $c;
+        return $self;
     }
 
     /**
-     * @param string $help
-     * @return $this
+     * {@inheritDoc}
      */
-    public function withHelp(string $help): self
-    {
-        $c = clone $this;
-        $c->help = $help;
+    #[Pure]
+    public function withHelp(
+        string $help
+    ): self {
+        $self = clone $this;
+        $self->help = $help;
 
-        return $c;
+        return $self;
     }
 
     /**
-     * @param string ...$label
-     * @return $this
+     * {@inheritDoc}
      */
-    public function withLabels(string ...$label): self
-    {
-        $c = clone $this;
-        $c->labels = $label;
+    #[Pure]
+    public function withLabels(
+        string ...$label
+    ): self {
+        $self = clone $this;
+        $self->labels = $label;
 
-        return $c;
+        return $self;
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    public function jsonSerialize(): array
+    #[Pure]
+    public function toArray(): array
     {
         return [
             'namespace' => $this->namespace,
             'subsystem' => $this->subsystem,
-            'type' => $this->type,
-            'help' => $this->help,
-            'labels' => $this->labels,
-            'buckets' => $this->buckets,
+            'type'      => $this->type,
+            'help'      => $this->help,
+            'labels'    => $this->labels,
+            'buckets'   => $this->buckets,
         ];
+    }
+
+    /**
+     * @return ArrayFormatType
+     */
+    #[Pure]
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 
     /**
@@ -96,12 +143,14 @@ final class Collector implements \JsonSerializable
      * @param float ...$bucket
      * @return static
      */
+    #[Pure]
     public static function histogram(float ...$bucket): self
     {
-        $c = new self(self::HISTOGRAM);
-        $c->buckets = $bucket;
+        $self = new self(self::TYPE_HISTOGRAM);
+        /** @psalm-suppress ImpurePropertyAssignment */
+        $self->buckets = $bucket;
 
-        return $c;
+        return $self;
     }
 
     /**
@@ -109,11 +158,10 @@ final class Collector implements \JsonSerializable
      *
      * @return static
      */
+    #[Pure]
     public static function gauge(): self
     {
-        $c = new self(self::GAUGE);
-
-        return $c;
+        return new self(self::TYPE_GAUGE);
     }
 
     /**
@@ -121,10 +169,9 @@ final class Collector implements \JsonSerializable
      *
      * @return static
      */
+    #[Pure]
     public static function counter(): self
     {
-        $c = new self(self::COUNTER);
-
-        return $c;
+        return new self(self::TYPE_COUNTER);
     }
 }
