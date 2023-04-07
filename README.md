@@ -1,7 +1,7 @@
 # RoadRunner Metrics Plugin
 
 [![PHP Version Require](https://poser.pugx.org/spiral/roadrunner-metrics/require/php)](https://packagist.org/packages/spiral/roadrunner-metrics)
-[![Latest Stable Version](https://poser.pugx.org/spiral/spiral/roadrunner-metrics/v/stable)](https://packagist.org/packages/spiral/roadrunner-metrics)
+[![Latest Stable Version](https://poser.pugx.org/spiral/roadrunner-metrics/version)](https://packagist.org/packages/spiral/roadrunner-metrics)
 [![phpunit](https://github.com/spiral/roadrunner-metrics/actions/workflows/phpunit.yml/badge.svg)](https://github.com/spiral/roadrunner-metrics/actions)
 [![psalm](https://github.com/spiral/roadrunner-metrics/actions/workflows/psalm.yml/badge.svg)](https://github.com/spiral/roadrunner-metrics/actions)
 [![Total Downloads](https://poser.pugx.org/spiral/roadrunner-metrics/downloads)](https://packagist.org/packages/spiral/roadrunner-metrics)
