@@ -2,6 +2,7 @@
 
 namespace Spiral\RoadRunner\Metrics;
 
+use JetBrains\PhpStorm\Pure;
 use JsonSerializable;
 
 /**
@@ -29,6 +30,7 @@ final class Collector implements CollectorInterface, JsonSerializable
     ) {
     }
 
+    #[Pure]
     public function withNamespace(string $namespace): self
     {
         $self = clone $this;
@@ -37,6 +39,7 @@ final class Collector implements CollectorInterface, JsonSerializable
         return $self;
     }
 
+    #[Pure]
     public function withSubsystem(string $subsystem): self
     {
         $self = clone $this;
@@ -45,6 +48,7 @@ final class Collector implements CollectorInterface, JsonSerializable
         return $self;
     }
 
+    #[Pure]
     public function withHelp(string $help): self
     {
         $self = clone $this;
@@ -53,6 +57,7 @@ final class Collector implements CollectorInterface, JsonSerializable
         return $self;
     }
 
+    #[Pure]
     public function withLabels(string ...$label): self
     {
         $self = clone $this;
@@ -61,6 +66,7 @@ final class Collector implements CollectorInterface, JsonSerializable
         return $self;
     }
 
+    #[Pure]
     public function toArray(): array
     {
         return [

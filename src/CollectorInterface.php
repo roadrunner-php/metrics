@@ -8,10 +8,10 @@ use JetBrains\PhpStorm\Pure;
 
 /**
  * @psalm-type ArrayFormatType = array{
- *      type:       CollectorType,
- *      namespace:  non-empty-string,
- *      subsystem:  non-empty-string,
- *      help:       non-empty-string,
+ *      type:       non-empty-string,
+ *      namespace:  string,
+ *      subsystem:  string,
+ *      help:       string,
  *      labels:     array<array-key, non-empty-string>,
  *      buckets:    array<array-key, float>
  * }

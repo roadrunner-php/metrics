@@ -24,7 +24,7 @@ class Metrics implements MetricsInterface
         try {
             $this->rpc->call('Add', \compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
-            throw new MetricsException($e->getMessage(), (int)$e->getCode(), $e);
+            throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -33,7 +33,7 @@ class Metrics implements MetricsInterface
         try {
             $this->rpc->call('Sub', \compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
-            throw new MetricsException($e->getMessage(), (int)$e->getCode(), $e);
+            throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -42,7 +42,7 @@ class Metrics implements MetricsInterface
         try {
             $this->rpc->call('Observe', \compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
-            throw new MetricsException($e->getMessage(), (int)$e->getCode(), $e);
+            throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -51,7 +51,7 @@ class Metrics implements MetricsInterface
         try {
             $this->rpc->call('Set', \compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
-            throw new MetricsException($e->getMessage(), (int)$e->getCode(), $e);
+            throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -68,7 +68,7 @@ class Metrics implements MetricsInterface
                 return;
             }
 
-            throw new MetricsException($e->getMessage(), (int)$e->getCode(), $e);
+            throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -77,7 +77,7 @@ class Metrics implements MetricsInterface
         try {
             $this->rpc->call('Unregister', $name);
         } catch (ServiceException $e) {
-            throw new MetricsException($e->getMessage(), (int)$e->getCode(), $e);
+            throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
     }
 }

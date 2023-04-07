@@ -53,6 +53,7 @@
         }
     },
     "require-dev": {
+        "jetbrains/phpstorm-attributes": "^1.0",
         "phpunit/phpunit": "^9.5.28",
         "vimeo/psalm": ">=5.8"
     },
