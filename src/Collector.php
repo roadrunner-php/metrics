@@ -10,18 +10,11 @@ use JsonSerializable;
  */
 final class Collector implements CollectorInterface, JsonSerializable
 {
-    /** @var string */
     private string $namespace = '';
-
-    /** @var string */
     private string $subsystem = '';
-
-    /** @var string */
     private string $help = '';
-
     /** @var non-empty-string[] */
     private array $labels = [];
-
     /** @var float[] */
     private array $buckets = [];
 
@@ -89,9 +82,6 @@ final class Collector implements CollectorInterface, JsonSerializable
 
     /**
      * New histogram metric.
-     *
-     * @param float ...$bucket
-     * @return static
      */
     public static function histogram(float ...$bucket): self
     {
@@ -104,8 +94,6 @@ final class Collector implements CollectorInterface, JsonSerializable
 
     /**
      * New gauge metric.
-     *
-     * @return static
      */
     public static function gauge(): self
     {
@@ -114,8 +102,6 @@ final class Collector implements CollectorInterface, JsonSerializable
 
     /**
      * New counter metric.
-     *
-     * @return static
      */
     public static function counter(): self
     {
