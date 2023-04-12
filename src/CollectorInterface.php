@@ -1,12 +1,5 @@
 <?php
 
-/**
- * This file is part of RoadRunner package.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 declare(strict_types=1);
 
 namespace Spiral\RoadRunner\Metrics;
@@ -14,57 +7,40 @@ namespace Spiral\RoadRunner\Metrics;
 use JetBrains\PhpStorm\Pure;
 
 /**
- * @psalm-type CollectorType = CollectorInterface::TYPE_*
- *
- * @psalm-type ArrayFormatType = array {
- *      type:       CollectorType,
+ * @psalm-type ArrayFormatType = array{
+ *      type:       non-empty-string,
  *      namespace:  string,
  *      subsystem:  string,
  *      help:       string,
- *      labels:     array<array-key, string>,
+ *      labels:     array<array-key, non-empty-string>,
  *      buckets:    array<array-key, float>
  * }
  */
 interface CollectorInterface
 {
     /**
-     * @var string
-     */
-    public const TYPE_HISTOGRAM = 'histogram';
-
-    /**
-     * @var string
-     */
-    public const TYPE_GAUGE = 'gauge';
-
-    /**
-     * @var string
-     */
-    public const TYPE_COUNTER = 'counter';
-
-    /**
-     * @param string $namespace
+     * @param non-empty-string $namespace
      * @return self
      */
     #[Pure]
     public function withNamespace(string $namespace): self;
 
     /**
-     * @param string $subsystem
+     * @param non-empty-string $subsystem
      * @return self
      */
     #[Pure]
     public function withSubsystem(string $subsystem): self;
 
     /**
-     * @param string $help
+     * @param non-empty-string $help
      * @return self
      */
     #[Pure]
     public function withHelp(string $help): self;
 
     /**
-     * @param string ...$label
+     * @param non-empty-string ...$label
      * @return self
      */
     #[Pure]

@@ -1,12 +1,5 @@
 <?php
 
-/**
- * This file is part of RoadRunner package.
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 declare(strict_types=1);
 
 namespace Spiral\RoadRunner\Metrics;
@@ -18,9 +11,9 @@ interface MetricsInterface
     /**
      * Add collector value. Fallback to appropriate method of related collector.
      *
-     * @param string $name
+     * @param non-empty-string $name
      * @param float $value
-     * @param array $labels
+     * @param non-empty-string[] $labels
      *
      * @throws MetricsException
      */
@@ -29,9 +22,9 @@ interface MetricsInterface
     /**
      * Subtract the collector value, only for gauge collector.
      *
-     * @param string $name
+     * @param non-empty-string $name
      * @param float $value
-     * @param array $labels
+     * @param non-empty-string[] $labels
      *
      * @throws MetricsException
      */
@@ -40,9 +33,9 @@ interface MetricsInterface
     /**
      * Observe collector value, only for histogram and summary collectors.
      *
-     * @param string $name
+     * @param non-empty-string $name
      * @param float $value
-     * @param array $labels
+     * @param non-empty-string[] $labels
      *
      * @throws MetricsException
      */
@@ -51,9 +44,9 @@ interface MetricsInterface
     /**
      * Set collector value, only for gauge collector.
      *
-     * @param string $name
+     * @param non-empty-string $name
      * @param float $value
-     * @param array $labels
+     * @param non-empty-string[] $labels
      *
      * @throws MetricsException
      */
@@ -62,10 +55,19 @@ interface MetricsInterface
     /**
      * Declares named collector.
      *
-     * @param string $name
+     * @param non-empty-string $name Collector name.
      * @param CollectorInterface $collector
      *
      * @throws MetricsException
      */
     public function declare(string $name, CollectorInterface $collector): void;
+
+    /**
+     * Unregisters named collector.
+     *
+     * @param non-empty-string $name Collector name.
+     *
+     * @throws MetricsException
+     */
+    public function unregister(string $name): void;
 }

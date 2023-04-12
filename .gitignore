@@ -1,5 +1,20 @@
-# Dependency directories (remove the comment below to include it)
-# vendor/
-.idea
+# IDEA
+.idea/
+*.iml
+
+# Composer
+composer.phar
 vendor
 composer.lock
+
+# OS
+.DS_Store
+Thumbs.db
+*.exe
+
+# Other
+.phpunit.result.cache
+.php_cs.cache
+clover.xml
+.env
+builds
