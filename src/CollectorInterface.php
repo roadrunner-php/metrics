@@ -20,28 +20,24 @@ interface CollectorInterface
 {
     /**
      * @param non-empty-string $namespace
-     * @return self
      */
     #[Pure]
     public function withNamespace(string $namespace): self;
 
     /**
      * @param non-empty-string $subsystem
-     * @return self
      */
     #[Pure]
     public function withSubsystem(string $subsystem): self;
 
     /**
      * @param non-empty-string $help
-     * @return self
      */
     #[Pure]
     public function withHelp(string $help): self;
 
     /**
      * @param non-empty-string ...$label
-     * @return self
      */
     #[Pure]
     public function withLabels(string ...$label): self;

@@ -12,9 +12,7 @@ interface MetricsInterface
      * Add collector value. Fallback to appropriate method of related collector.
      *
      * @param non-empty-string $name
-     * @param float $value
      * @param non-empty-string[] $labels
-     *
      * @throws MetricsException
      */
     public function add(string $name, float $value, array $labels = []): void;
@@ -23,9 +21,7 @@ interface MetricsInterface
      * Subtract the collector value, only for gauge collector.
      *
      * @param non-empty-string $name
-     * @param float $value
      * @param non-empty-string[] $labels
-     *
      * @throws MetricsException
      */
     public function sub(string $name, float $value, array $labels = []): void;
@@ -34,9 +30,7 @@ interface MetricsInterface
      * Observe collector value, only for histogram and summary collectors.
      *
      * @param non-empty-string $name
-     * @param float $value
      * @param non-empty-string[] $labels
-     *
      * @throws MetricsException
      */
     public function observe(string $name, float $value, array $labels = []): void;
@@ -45,9 +39,7 @@ interface MetricsInterface
      * Set collector value, only for gauge collector.
      *
      * @param non-empty-string $name
-     * @param float $value
      * @param non-empty-string[] $labels
-     *
      * @throws MetricsException
      */
     public function set(string $name, float $value, array $labels = []): void;
@@ -56,7 +48,6 @@ interface MetricsInterface
      * Declares named collector.
      *
      * @param non-empty-string $name Collector name.
-     * @param CollectorInterface $collector
      *
      * @throws MetricsException
      */
