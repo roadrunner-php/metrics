@@ -11,6 +11,7 @@ class MetricsOptions
     public function __construct(
         public readonly int $retryAttempts = 3,
         public readonly int $retrySleepMicroseconds = 50,
+        public readonly bool $suppressExceptions = false,
     ) {
     }
 }
