@@ -74,6 +74,14 @@ final class CollectorTest extends TestCase
         $this->assertSame([], $collector->toArray()['buckets']);
     }
 
+    public function testSummary(): void
+    {
+        $collector = Collector::summary();
+
+        $this->assertSame(CollectorType::Summary, $collector->type);
+        $this->assertSame([], $collector->toArray()['buckets']);
+    }
+
     public function testWithNamespace(): void
     {
         $collector = Collector::counter();

@@ -9,4 +9,5 @@ enum CollectorType: string
     case Histogram = 'histogram';
     case Gauge = 'gauge';
     case Counter = 'counter';
+    case Summary = 'summary';
 }
