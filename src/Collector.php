@@ -107,4 +107,12 @@ final class Collector implements CollectorInterface, JsonSerializable
     {
         return new self(CollectorType::Counter);
     }
+
+    /**
+     * New summary metric.
+     */
+    public static function summary(): self
+    {
+        return new self(CollectorType::Summary);
+    }
 }
