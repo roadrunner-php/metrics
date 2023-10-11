@@ -17,24 +17,24 @@ class RetryMetrics implements MetricsInterface
     ) {
     }
 
-    public function add(string $name, float $value, array $labels = []): void
+    public function add(string $name, float $value, array $labels = [], string $namespace = ''): void
     {
-        $this->retry(fn () => $this->metrics->add($name, $value, $labels));
+        $this->retry(fn () => $this->metrics->add($name, $value, $labels, $namespace));
     }
 
-    public function sub(string $name, float $value, array $labels = []): void
+    public function sub(string $name, float $value, array $labels = [], string $namespace = ''): void
     {
-        $this->retry(fn () => $this->metrics->sub($name, $value, $labels));
+        $this->retry(fn () => $this->metrics->sub($name, $value, $labels, $namespace));
     }
 
-    public function observe(string $name, float $value, array $labels = []): void
+    public function observe(string $name, float $value, array $labels = [], string $namespace = ''): void
     {
-        $this->retry(fn () => $this->metrics->observe($name, $value, $labels));
+        $this->retry(fn () => $this->metrics->observe($name, $value, $labels, $namespace));
     }
 
-    public function set(string $name, float $value, array $labels = []): void
+    public function set(string $name, float $value, array $labels = [], string $namespace = ''): void
     {
-        $this->retry(fn () => $this->metrics->set($name, $value, $labels));
+        $this->retry(fn () => $this->metrics->set($name, $value, $labels, $namespace));
     }
 
     public function declare(string $name, CollectorInterface $collector): void
@@ -42,9 +42,9 @@ class RetryMetrics implements MetricsInterface
         $this->retry(fn () => $this->metrics->declare($name, $collector));
     }
 
-    public function unregister(string $name): void
+    public function unregister(string $name, string $namespace = ''): void
     {
-        $this->retry(fn () => $this->metrics->unregister($name));
+        $this->retry(fn () => $this->metrics->unregister($name, $namespace));
     }
 
     private function retry(callable $request): void
@@ -63,7 +63,7 @@ class RetryMetrics implements MetricsInterface
                 }
             }
 
-            usleep($this->retrySleepMicroseconds);
+            \usleep($this->retrySleepMicroseconds);
         } while ($attempts < $this->retryAttempts);
     }
 }

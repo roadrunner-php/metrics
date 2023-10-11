@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Spiral\RoadRunner\Metrics\Tests\Unit;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Spiral\Goridge\RPC\Exception\ServiceException;
 use Spiral\Goridge\RPC\RPCInterface;
@@ -14,7 +16,7 @@ use Spiral\RoadRunner\Metrics\Metrics;
 final class MetricsTest extends TestCase
 {
     private Metrics $metrics;
-    private \PHPUnit\Framework\MockObject\MockObject|RPCInterface $rpc;
+    private MockObject|RPCInterface $rpc;
 
     protected function setUp(): void
     {
@@ -28,14 +30,53 @@ final class MetricsTest extends TestCase
         $this->metrics = new Metrics($this->rpc);
     }
 
-    public function testAdd(): void
+    public static function metricsProvider(): iterable
+    {
+        yield [
+            [
+                'name' => 'foo',
+                'value' => 1.0,
+            ],
+            ['name' => 'foo', 'value' => 1.0, 'labels' => [], 'namespace' => ''],
+        ];
+
+        yield [
+            [
+                'name' => 'foo',
+                'value' => 1.0,
+                'labels' => ['bar', 'baz'],
+            ],
+            ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz'], 'namespace' => ''],
+        ];
+
+        yield [
+            [
+                'name' => 'foo',
+                'value' => 1.0,
+                'namespace' => 'ns1',
+            ],
+            ['name' => 'foo', 'value' => 1.0, 'labels' => [], 'namespace' => 'ns1'],
+        ];
+
+        yield [
+            [
+                'name' => 'foo',
+                'value' => 1.0,
+                'labels' => ['bar', 'baz'],
+                'namespace' => 'ns1',
+            ],
+            ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz'], 'namespace' => 'ns1'],
+        ];
+    }
+
+    #[DataProvider('metricsProvider')]
+    public function testAdd(array $params, array $expected): void
     {
         $this->rpc->expects($this->once())
             ->method('call')
-            ->with('Add', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
-            ->willReturn(null);
+            ->with('Add', $expected);
 
-        $this->metrics->add('foo', 1.0, ['bar', 'baz']);
+        $this->metrics->add(...$params);
     }
 
     public function testAddWithError(): void
@@ -50,17 +91,17 @@ final class MetricsTest extends TestCase
             ->method('call')
             ->willThrowException($e);
 
-        $this->metrics->add('foo', 1.0, ['bar', 'baz']);
+        $this->metrics->add(name: 'foo', value: 1.0);
     }
 
-    public function testSub(): void
+    #[DataProvider('metricsProvider')]
+    public function testSub(array $params, array $expected): void
     {
         $this->rpc->expects($this->once())
             ->method('call')
-            ->with('Sub', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
-            ->willReturn(null);
+            ->with('Sub', $expected);
 
-        $this->metrics->sub('foo', 1.0, ['bar', 'baz']);
+        $this->metrics->sub(...$params);
     }
 
     public function testSubWithError(): void
@@ -78,14 +119,14 @@ final class MetricsTest extends TestCase
         $this->metrics->sub('foo', 1.0, ['bar', 'baz']);
     }
 
-    public function testObserve(): void
+    #[DataProvider('metricsProvider')]
+    public function testObserve(array $params, array $expected): void
     {
         $this->rpc->expects($this->once())
             ->method('call')
-            ->with('Observe', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
-            ->willReturn(null);
+            ->with('Observe', $expected);
 
-        $this->metrics->observe('foo', 1.0, ['bar', 'baz']);
+        $this->metrics->observe(...$params);
     }
 
     public function testObserveWithError(): void
@@ -103,14 +144,14 @@ final class MetricsTest extends TestCase
         $this->metrics->observe('foo', 1.0, ['bar', 'baz']);
     }
 
-    public function testSet(): void
+    #[DataProvider('metricsProvider')]
+    public function testSet(array $params, array $expected): void
     {
         $this->rpc->expects($this->once())
             ->method('call')
-            ->with('Set', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
-            ->willReturn(null);
+            ->with('Set', $expected);
 
-        $this->metrics->set('foo', 1.0, ['bar', 'baz']);
+        $this->metrics->set(...$params);
     }
 
     public function testSetWithError(): void
@@ -137,8 +178,7 @@ final class MetricsTest extends TestCase
 
         $this->rpc->expects($this->once())
             ->method('call')
-            ->with('Declare', ['name' => 'foo', 'collector' => $payload])
-            ->willReturn(null);
+            ->with('Declare', ['name' => 'foo', 'collector' => $payload]);
 
         $this->metrics->declare('foo', $collector);
     }
@@ -179,10 +219,18 @@ final class MetricsTest extends TestCase
     {
         $this->rpc->expects($this->once())
             ->method('call')
-            ->with('Unregister', 'foo')
-            ->willReturn(null);
+            ->with('Unregister', 'foo');
 
         $this->metrics->unregister('foo');
+    }
+
+    public function testUnregisterWithNamespace(): void
+    {
+        $this->rpc->expects($this->once())
+            ->method('call')
+            ->with('Unregister', 'foo@ns1');
+
+        $this->metrics->unregister(name: 'foo', namespace: 'ns1');
     }
 
     public function testUnregisterWithError(): void

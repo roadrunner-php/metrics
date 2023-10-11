@@ -19,37 +19,37 @@ class Metrics implements MetricsInterface
         $this->rpc = $rpc->withServicePrefix(self::SERVICE_NAME);
     }
 
-    public function add(string $name, float $value, array $labels = []): void
+    public function add(string $name, float $value, array $labels = [], string $namespace = ''): void
     {
         try {
-            $this->rpc->call('Add', \compact('name', 'value', 'labels'));
+            $this->rpc->call('Add', \compact('name', 'value', 'labels', 'namespace'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
-    public function sub(string $name, float $value, array $labels = []): void
+    public function sub(string $name, float $value, array $labels = [], string $namespace = ''): void
     {
         try {
-            $this->rpc->call('Sub', \compact('name', 'value', 'labels'));
+            $this->rpc->call('Sub', \compact('name', 'value', 'labels', 'namespace'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
-    public function observe(string $name, float $value, array $labels = []): void
+    public function observe(string $name, float $value, array $labels = [], string $namespace = ''): void
     {
         try {
-            $this->rpc->call('Observe', \compact('name', 'value', 'labels'));
+            $this->rpc->call('Observe', \compact('name', 'value', 'labels', 'namespace'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
-    public function set(string $name, float $value, array $labels = []): void
+    public function set(string $name, float $value, array $labels = [], string $namespace = ''): void
     {
         try {
-            $this->rpc->call('Set', \compact('name', 'value', 'labels'));
+            $this->rpc->call('Set', \compact('name', 'value', 'labels', 'namespace'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -72,9 +72,15 @@ class Metrics implements MetricsInterface
         }
     }
 
-    public function unregister(string $name): void
+    public function unregister(string $name, string $namespace = ''): void
     {
+        \assert($name !== '');
+
         try {
+            if ($namespace !== '') {
+                $name = $name . '@' . $namespace;
+            }
+
             $this->rpc->call('Unregister', $name);
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);

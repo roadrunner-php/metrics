@@ -14,39 +14,39 @@ class SuppressExceptionsMetrics implements MetricsInterface
     ) {
     }
 
-    public function add(string $name, float $value, array $labels = []): void
+    public function add(string $name, float $value, array $labels = [], string $namespace = ''): void
     {
         try {
-            $this->metrics->add($name, $value, $labels);
+            $this->metrics->add($name, $value, $labels, $namespace);
         } catch (MetricsException $e) {
-            $this->logger->warning(sprintf('[Metrics] Operation "Add" was failed: %s', $e->getMessage()));
+            $this->logger->warning(\sprintf('[Metrics] Operation "Add" was failed: %s', $e->getMessage()));
         }
     }
 
-    public function sub(string $name, float $value, array $labels = []): void
+    public function sub(string $name, float $value, array $labels = [], string $namespace = ''): void
     {
         try {
-            $this->metrics->sub($name, $value, $labels);
+            $this->metrics->sub($name, $value, $labels, $namespace);
         } catch (MetricsException $e) {
-            $this->logger->warning(sprintf('[Metrics] Operation "Sub" was failed: %s', $e->getMessage()));
+            $this->logger->warning(\sprintf('[Metrics] Operation "Sub" was failed: %s', $e->getMessage()));
         }
     }
 
-    public function observe(string $name, float $value, array $labels = []): void
+    public function observe(string $name, float $value, array $labels = [], string $namespace = ''): void
     {
         try {
-            $this->metrics->observe($name, $value, $labels);
+            $this->metrics->observe($name, $value, $labels, $namespace);
         } catch (MetricsException $e) {
-            $this->logger->warning(sprintf('[Metrics] Operation "Observe" was failed: %s', $e->getMessage()));
+            $this->logger->warning(\sprintf('[Metrics] Operation "Observe" was failed: %s', $e->getMessage()));
         }
     }
 
-    public function set(string $name, float $value, array $labels = []): void
+    public function set(string $name, float $value, array $labels = [], string $namespace = ''): void
     {
         try {
-            $this->metrics->set($name, $value, $labels);
+            $this->metrics->set($name, $value, $labels, $namespace);
         } catch (MetricsException $e) {
-            $this->logger->warning(sprintf('[Metrics] Operation "Set" was failed: %s', $e->getMessage()));
+            $this->logger->warning(\sprintf('[Metrics] Operation "Set" was failed: %s', $e->getMessage()));
         }
     }
 
@@ -55,16 +55,16 @@ class SuppressExceptionsMetrics implements MetricsInterface
         try {
             $this->metrics->declare($name, $collector);
         } catch (MetricsException $e) {
-            $this->logger->warning(sprintf('[Metrics] Operation "Declare" was failed: %s', $e->getMessage()));
+            $this->logger->warning(\sprintf('[Metrics] Operation "Declare" was failed: %s', $e->getMessage()));
         }
     }
 
-    public function unregister(string $name): void
+    public function unregister(string $name, string $namespace = ''): void
     {
         try {
-            $this->metrics->unregister($name);
+            $this->metrics->unregister($name, $namespace);
         } catch (MetricsException $e) {
-            $this->logger->warning(sprintf('[Metrics] Operation "Unregister" was failed: %s', $e->getMessage()));
+            $this->logger->warning(\sprintf('[Metrics] Operation "Unregister" was failed: %s', $e->getMessage()));
         }
     }
 }
