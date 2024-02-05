@@ -70,7 +70,7 @@ class Metrics implements MetricsInterface
     public function declare(string $name, CollectorInterface $collector): void
     {
         try {
-            $this->wrappedCall('Declare', [
+            $this->rpc->call('Declare', [
                 'name' => $name,
                 'collector' => $collector->toArray(),
             ]);
@@ -87,7 +87,7 @@ class Metrics implements MetricsInterface
     public function unregister(string $name): void
     {
         try {
-            $this->wrappedCall('Unregister', $name);
+            $this->rpc->call('Unregister', $name);
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
