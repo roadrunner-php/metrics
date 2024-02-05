@@ -1,29 +1,28 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Spiral\RoadRunner\Metrics;
 
 use Spiral\Goridge\RPC\AsyncRPCInterface;
 use Spiral\Goridge\RPC\Exception\ServiceException;
-use Spiral\Goridge\RPC\RPCInterface;
 use Spiral\RoadRunner\Metrics\Exception\MetricsException;
-use function compact;
-use function str_contains;
 
-class Metrics extends AbstractMetrics
+class MetricsIgnoreResponse extends AbstractMetrics
 {
-    protected readonly RPCInterface $rpc;
+    protected readonly AsyncRPCInterface $rpc;
 
-    public function __construct(RPCInterface $rpc)
+    public function __construct(AsyncRPCInterface $rpc)
     {
+        /**
+         * @noinspection PhpFieldAssignmentTypeMismatchInspection
+         * @psalm-suppress PropertyTypeCoercion
+         */
         $this->rpc = $rpc->withServicePrefix(self::SERVICE_NAME);
     }
 
     public function add(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->call('Add', compact('name', 'value', 'labels'));
+            $this->rpc->callIgnoreResponse('Add', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -32,7 +31,7 @@ class Metrics extends AbstractMetrics
     public function sub(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->call('Sub', compact('name', 'value', 'labels'));
+            $this->rpc->callIgnoreResponse('Sub', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -41,7 +40,7 @@ class Metrics extends AbstractMetrics
     public function observe(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->call('Observe', compact('name', 'value', 'labels'));
+            $this->rpc->callIgnoreResponse('Observe', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -50,7 +49,7 @@ class Metrics extends AbstractMetrics
     public function set(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->call('Set', compact('name', 'value', 'labels'));
+            $this->rpc->callIgnoreResponse('Set', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
