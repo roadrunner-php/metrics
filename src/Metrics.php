@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Spiral\RoadRunner\Metrics;
 
+use Spiral\Goridge\RPC\AsyncRPCInterface;
 use Spiral\Goridge\RPC\Exception\ServiceException;
 use Spiral\Goridge\RPC\RPCInterface;
 use Spiral\RoadRunner\Metrics\Exception\MetricsException;
+use function compact;
+use function str_contains;
 
 class Metrics implements MetricsInterface
 {
@@ -19,10 +22,19 @@ class Metrics implements MetricsInterface
         $this->rpc = $rpc->withServicePrefix(self::SERVICE_NAME);
     }
 
+    private function wrappedCall(string $method, mixed $payload): void
+    {
+        if ($this->rpc instanceof AsyncRPCInterface) {
+            $this->rpc->callIgnoreResponse($method, $payload);
+        } else {
+            $this->rpc->call($method, $payload);
+        }
+    }
+
     public function add(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->call('Add', \compact('name', 'value', 'labels'));
+            $this->wrappedCall('Add', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -31,7 +43,7 @@ class Metrics implements MetricsInterface
     public function sub(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->call('Sub', \compact('name', 'value', 'labels'));
+            $this->wrappedCall('Sub', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -40,7 +52,7 @@ class Metrics implements MetricsInterface
     public function observe(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->call('Observe', \compact('name', 'value', 'labels'));
+            $this->wrappedCall('Observe', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -49,7 +61,7 @@ class Metrics implements MetricsInterface
     public function set(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->call('Set', \compact('name', 'value', 'labels'));
+            $this->wrappedCall('Set', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -58,12 +70,12 @@ class Metrics implements MetricsInterface
     public function declare(string $name, CollectorInterface $collector): void
     {
         try {
-            $this->rpc->call('Declare', [
+            $this->wrappedCall('Declare', [
                 'name' => $name,
                 'collector' => $collector->toArray(),
             ]);
         } catch (ServiceException $e) {
-            if (\str_contains($e->getMessage(), 'tried to register existing collector')) {
+            if (str_contains($e->getMessage(), 'tried to register existing collector')) {
                 // suppress duplicate metric error
                 return;
             }
@@ -75,7 +87,7 @@ class Metrics implements MetricsInterface
     public function unregister(string $name): void
     {
         try {
-            $this->rpc->call('Unregister', $name);
+            $this->wrappedCall('Unregister', $name);
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
