@@ -99,10 +99,20 @@ final class MetricsFactoryTest extends TestCase
                 'rpcInterfaceClass' => RPCInterface::class
             ],
             'create MetricsIgnoreResponse if AsyncRPCInterface' => [
-                'options' => new MetricsOptions(ignoreResponsesWherePossible: true),
+                'options' => new MetricsOptions(retryAttempts: 0, suppressExceptions: false, ignoreResponsesWherePossible: true),
                 'expectedClass' => MetricsIgnoreResponse::class,
                 'rpcInterfaceClass' => AsyncRPCInterface::class
-            ]
+            ],
+            'create MetricsIgnoreResponse with RetryMetrics if AsyncRPCInterface' => [
+                'options' => new MetricsOptions(retryAttempts: 3, suppressExceptions: false, ignoreResponsesWherePossible: true),
+                'expectedClass' => RetryMetrics::class,
+                'rpcInterfaceClass' => AsyncRPCInterface::class
+            ],
+            'create MetricsIgnoreResponse with SuppressExceptions if AsyncRPCInterface' => [
+                'options' => new MetricsOptions(retryAttempts: 3, suppressExceptions: true, ignoreResponsesWherePossible: true),
+                'expectedClass' => SuppressExceptionsMetrics::class,
+                'rpcInterfaceClass' => AsyncRPCInterface::class
+            ],
         ];
     }
 }

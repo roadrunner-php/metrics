@@ -20,15 +20,21 @@ class MetricsFactory
             $this->logger->warning("ignoreResponsesWherePossible is true but no AsyncRPCInterface provided");
         } elseif (!$options->ignoreResponsesWherePossible && $rpc instanceof AsyncRPCInterface) {
             $this->logger->warning("ignoreResponsesWherePossible is false but an AsyncRPCInterface was provided");
-        } elseif ($options->ignoreResponsesWherePossible && $rpc instanceof AsyncRPCInterface) {
-            return new MetricsIgnoreResponse($rpc);
         }
 
-        $metrics = new RetryMetrics(
-            new Metrics($rpc),
-            $options->retryAttempts,
-            $options->retrySleepMicroseconds,
-        );
+        if ($options->ignoreResponsesWherePossible && $rpc instanceof AsyncRPCInterface) {
+            $metrics = new MetricsIgnoreResponse($rpc);
+        } else {
+            $metrics = new Metrics($rpc);
+        }
+
+        if ($options->retryAttempts > 0) {
+            $metrics = new RetryMetrics(
+                $metrics,
+                $options->retryAttempts,
+                $options->retrySleepMicroseconds,
+            );
+        }
 
         if ($options->suppressExceptions) {
             $metrics = new SuppressExceptionsMetrics($metrics, $this->logger);
