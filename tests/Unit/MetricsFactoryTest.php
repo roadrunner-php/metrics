@@ -24,9 +24,6 @@ final class MetricsFactoryTest extends TestCase
 
         /** @var MockObject&RPCInterface $rpc */
         $rpc = $this->createMock($rpcInterfaceClass);
-        $rpc->expects($this->once())->method('withServicePrefix')
-            ->with('metrics')
-            ->willReturn($rpc);
 
         self::assertInstanceOf($expectedClass, $factory->create($rpc, $options));
     }
@@ -38,9 +35,6 @@ final class MetricsFactoryTest extends TestCase
     {
         /** @var MockObject&RPCInterface $rpc */
         $rpc = $this->createMock($rpcInterfaceClass);
-        $rpc->expects($this->once())->method('withServicePrefix')
-            ->with('metrics')
-            ->willReturn($rpc);
 
         self::assertInstanceOf($expectedClass, MetricsFactory::createMetrics($rpc, $options));
     }
@@ -52,9 +46,6 @@ final class MetricsFactoryTest extends TestCase
             ->with('ignoreResponsesWherePossible is true but no AsyncRPCInterface provided');
 
         $rpc = $this->createMock(RPCInterface::class);
-        $rpc->expects($this->once())->method('withServicePrefix')
-            ->with('metrics')
-            ->willReturn($rpc);
 
         $factory = new MetricsFactory($logger);
         $factory->create($rpc, new MetricsOptions(ignoreResponsesWherePossible: true));
@@ -67,9 +58,6 @@ final class MetricsFactoryTest extends TestCase
             ->with('ignoreResponsesWherePossible is false but an AsyncRPCInterface was provided');
 
         $rpc = $this->createMock(AsyncRPCInterface::class);
-        $rpc->expects($this->once())->method('withServicePrefix')
-            ->with('metrics')
-            ->willReturn($rpc);
 
         $factory = new MetricsFactory($logger);
         $factory->create($rpc, new MetricsOptions(ignoreResponsesWherePossible: false));

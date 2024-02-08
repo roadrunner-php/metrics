@@ -13,17 +13,15 @@ use function str_contains;
 
 class Metrics extends AbstractMetrics
 {
-    protected readonly RPCInterface $rpc;
-
-    public function __construct(RPCInterface $rpc)
-    {
-        $this->rpc = $rpc->withServicePrefix(self::SERVICE_NAME);
+    public function __construct(
+        protected readonly RPCInterface $rpc
+    ) {
     }
 
     public function add(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->call('Add', compact('name', 'value', 'labels'));
+            $this->rpc->call('metrics.Add', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -32,7 +30,7 @@ class Metrics extends AbstractMetrics
     public function sub(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->call('Sub', compact('name', 'value', 'labels'));
+            $this->rpc->call('metrics.Sub', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -41,7 +39,7 @@ class Metrics extends AbstractMetrics
     public function observe(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->call('Observe', compact('name', 'value', 'labels'));
+            $this->rpc->call('metrics.Observe', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -50,7 +48,7 @@ class Metrics extends AbstractMetrics
     public function set(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->call('Set', compact('name', 'value', 'labels'));
+            $this->rpc->call('metrics.Set', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -59,7 +57,7 @@ class Metrics extends AbstractMetrics
     public function declare(string $name, CollectorInterface $collector): void
     {
         try {
-            $this->rpc->call('Declare', [
+            $this->rpc->call('metrics.Declare', [
                 'name' => $name,
                 'collector' => $collector->toArray(),
             ]);
@@ -76,7 +74,7 @@ class Metrics extends AbstractMetrics
     public function unregister(string $name): void
     {
         try {
-            $this->rpc->call('Unregister', $name);
+            $this->rpc->call('metrics.Unregister', $name);
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
