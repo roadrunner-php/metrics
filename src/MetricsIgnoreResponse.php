@@ -1,27 +1,22 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Spiral\RoadRunner\Metrics;
 
 use Spiral\Goridge\RPC\AsyncRPCInterface;
 use Spiral\Goridge\RPC\Exception\ServiceException;
-use Spiral\Goridge\RPC\RPCInterface;
 use Spiral\RoadRunner\Metrics\Exception\MetricsException;
-use function compact;
-use function str_contains;
 
-class Metrics extends AbstractMetrics
+class MetricsIgnoreResponse extends AbstractMetrics
 {
     public function __construct(
-        protected readonly RPCInterface $rpc
+        protected readonly AsyncRPCInterface $rpc
     ) {
     }
 
     public function add(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->call('metrics.Add', compact('name', 'value', 'labels'));
+            $this->rpc->callIgnoreResponse('metrics.Add', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -30,7 +25,7 @@ class Metrics extends AbstractMetrics
     public function sub(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->call('metrics.Sub', compact('name', 'value', 'labels'));
+            $this->rpc->callIgnoreResponse('metrics.Sub', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -39,7 +34,7 @@ class Metrics extends AbstractMetrics
     public function observe(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->call('metrics.Observe', compact('name', 'value', 'labels'));
+            $this->rpc->callIgnoreResponse('metrics.Observe', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -48,7 +43,7 @@ class Metrics extends AbstractMetrics
     public function set(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->call('metrics.Set', compact('name', 'value', 'labels'));
+            $this->rpc->callIgnoreResponse('metrics.Set', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }

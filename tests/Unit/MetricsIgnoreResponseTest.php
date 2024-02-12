@@ -2,49 +2,34 @@
 
 declare(strict_types=1);
 
-namespace Spiral\RoadRunner\Metrics\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
+use Spiral\Goridge\RPC\AsyncRPCInterface;
 use Spiral\Goridge\RPC\Exception\ServiceException;
 use Spiral\Goridge\RPC\RPCInterface;
 use Spiral\RoadRunner\Metrics\CollectorInterface;
 use Spiral\RoadRunner\Metrics\Exception\MetricsException;
 use Spiral\RoadRunner\Metrics\Metrics;
+use Spiral\RoadRunner\Metrics\MetricsIgnoreResponse;
 
-final class MetricsTest extends TestCase
+final class MetricsIgnoreResponseTest extends TestCase
 {
-    private Metrics $metrics;
-    private \PHPUnit\Framework\MockObject\MockObject|RPCInterface $rpc;
+    private MetricsIgnoreResponse $metrics;
+    private \PHPUnit\Framework\MockObject\MockObject&AsyncRPCInterface $rpc;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->rpc = $this->createMock(RPCInterface::class);
-        $this->metrics = new Metrics($this->rpc);
+        $this->rpc = $this->createMock(AsyncRPCInterface::class);
+        $this->metrics = new MetricsIgnoreResponse($this->rpc);
     }
 
     public function testAdd(): void
     {
         $this->rpc->expects($this->once())
-            ->method('call')
-            ->with('metrics.Add', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
-            ->willReturn(null);
-
-        $this->metrics->add('foo', 1.0, ['bar', 'baz']);
-    }
-
-    public function testAddWithError(): void
-    {
-        $e = new ServiceException('Something went wrong', 1);
-
-        $this->expectException(MetricsException::class);
-        $this->expectExceptionMessage($e->getMessage());
-        $this->expectExceptionCode($e->getCode());
-
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->willThrowException($e);
+            ->method('callIgnoreResponse')
+            ->with('metrics.Add', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']]);
 
         $this->metrics->add('foo', 1.0, ['bar', 'baz']);
     }
@@ -52,24 +37,8 @@ final class MetricsTest extends TestCase
     public function testSub(): void
     {
         $this->rpc->expects($this->once())
-            ->method('call')
-            ->with('metrics.Sub', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
-            ->willReturn(null);
-
-        $this->metrics->sub('foo', 1.0, ['bar', 'baz']);
-    }
-
-    public function testSubWithError(): void
-    {
-        $e = new ServiceException('Something went wrong', 1);
-
-        $this->expectException(MetricsException::class);
-        $this->expectExceptionMessage($e->getMessage());
-        $this->expectExceptionCode($e->getCode());
-
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->willThrowException($e);
+            ->method('callIgnoreResponse')
+            ->with('metrics.Sub', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']]);
 
         $this->metrics->sub('foo', 1.0, ['bar', 'baz']);
     }
@@ -77,24 +46,8 @@ final class MetricsTest extends TestCase
     public function testObserve(): void
     {
         $this->rpc->expects($this->once())
-            ->method('call')
-            ->with('metrics.Observe', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
-            ->willReturn(null);
-
-        $this->metrics->observe('foo', 1.0, ['bar', 'baz']);
-    }
-
-    public function testObserveWithError(): void
-    {
-        $e = new ServiceException('Something went wrong', 1);
-
-        $this->expectException(MetricsException::class);
-        $this->expectExceptionMessage($e->getMessage());
-        $this->expectExceptionCode($e->getCode());
-
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->willThrowException($e);
+            ->method('callIgnoreResponse')
+            ->with('metrics.Observe', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']]);
 
         $this->metrics->observe('foo', 1.0, ['bar', 'baz']);
     }
@@ -102,24 +55,8 @@ final class MetricsTest extends TestCase
     public function testSet(): void
     {
         $this->rpc->expects($this->once())
-            ->method('call')
-            ->with('metrics.Set', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
-            ->willReturn(null);
-
-        $this->metrics->set('foo', 1.0, ['bar', 'baz']);
-    }
-
-    public function testSetWithError(): void
-    {
-        $e = new ServiceException('Something went wrong', 1);
-
-        $this->expectException(MetricsException::class);
-        $this->expectExceptionMessage($e->getMessage());
-        $this->expectExceptionCode($e->getCode());
-
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->willThrowException($e);
+            ->method('callIgnoreResponse')
+            ->with('metrics.Set', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']]);
 
         $this->metrics->set('foo', 1.0, ['bar', 'baz']);
     }
