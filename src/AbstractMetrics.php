@@ -11,7 +11,7 @@ abstract class AbstractMetrics implements MetricsInterface
     protected readonly RPCInterface $rpc;
 
 	/**
-	 * @var string
+	 * @var non-empty-string
 	 */
     protected const SERVICE_NAME = 'metrics';
 
