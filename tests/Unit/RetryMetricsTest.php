@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Spiral\RoadRunner\Metrics\Tests\Unit;
 
-use PHPUnit\Framework\MockObject\Rule\InvokedCount;
 use PHPUnit\Framework\TestCase;
 use Spiral\RoadRunner\Metrics\Collector;
 use Spiral\RoadRunner\Metrics\Exception\MetricsException;
@@ -21,7 +22,7 @@ final class RetryMetricsTest extends TestCase
             1,
         );
 
-        self::expectException(MetricsException::class);
+        $this->expectException(MetricsException::class);
 
         $retryMetrics->add('counter', 1);
     }
@@ -49,7 +50,7 @@ final class RetryMetricsTest extends TestCase
             1,
         );
 
-        self::expectException(MetricsException::class);
+        $this->expectException(MetricsException::class);
 
         $retryMetrics->sub('counter', 1);
     }
@@ -77,7 +78,7 @@ final class RetryMetricsTest extends TestCase
             1,
         );
 
-        self::expectException(MetricsException::class);
+        $this->expectException(MetricsException::class);
 
         $retryMetrics->observe('counter', 1);
     }
@@ -105,7 +106,7 @@ final class RetryMetricsTest extends TestCase
             1,
         );
 
-        self::expectException(MetricsException::class);
+        $this->expectException(MetricsException::class);
 
         $retryMetrics->set('counter', 1);
     }
@@ -133,7 +134,7 @@ final class RetryMetricsTest extends TestCase
             1,
         );
 
-        self::expectException(MetricsException::class);
+        $this->expectException(MetricsException::class);
 
         $retryMetrics->declare('counter', Collector::counter());
     }
@@ -161,7 +162,7 @@ final class RetryMetricsTest extends TestCase
             1,
         );
 
-        self::expectException(MetricsException::class);
+        $this->expectException(MetricsException::class);
 
         $retryMetrics->unregister('counter');
     }
@@ -183,14 +184,13 @@ final class RetryMetricsTest extends TestCase
     {
         $metrics = $this->createMock(MetricsInterface::class);
 
+        $returnValues = \array_fill(0, $exceptions, $this->throwException(new MetricsException()));
+        $returnValues[] = null;
+
         $metrics
-            ->expects(new InvokedCount($expectedCalls))
+            ->expects($this->exactly($expectedCalls))
             ->method($method)
-            ->willReturnOnConsecutiveCalls(...array_fill(
-                0,
-                $exceptions,
-                $this->throwException(new MetricsException()),
-            ));
+            ->willReturnOnConsecutiveCalls(...$returnValues);
 
         return $metrics;
     }
