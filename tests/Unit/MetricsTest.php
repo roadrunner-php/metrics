@@ -21,6 +21,10 @@ final class MetricsTest extends TestCase
         parent::setUp();
 
         $this->rpc = $this->createMock(RPCInterface::class);
+        $this->rpc->expects($this->once())->method('withServicePrefix')
+            ->with('metrics')
+            ->willReturn($this->rpc);
+
         $this->metrics = new Metrics($this->rpc);
     }
 
@@ -28,7 +32,7 @@ final class MetricsTest extends TestCase
     {
         $this->rpc->expects($this->once())
             ->method('call')
-            ->with('metrics.Add', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
+            ->with('Add', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
             ->willReturn(null);
 
         $this->metrics->add('foo', 1.0, ['bar', 'baz']);
@@ -53,7 +57,7 @@ final class MetricsTest extends TestCase
     {
         $this->rpc->expects($this->once())
             ->method('call')
-            ->with('metrics.Sub', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
+            ->with('Sub', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
             ->willReturn(null);
 
         $this->metrics->sub('foo', 1.0, ['bar', 'baz']);
@@ -78,7 +82,7 @@ final class MetricsTest extends TestCase
     {
         $this->rpc->expects($this->once())
             ->method('call')
-            ->with('metrics.Observe', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
+            ->with('Observe', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
             ->willReturn(null);
 
         $this->metrics->observe('foo', 1.0, ['bar', 'baz']);
@@ -103,7 +107,7 @@ final class MetricsTest extends TestCase
     {
         $this->rpc->expects($this->once())
             ->method('call')
-            ->with('metrics.Set', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
+            ->with('Set', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
             ->willReturn(null);
 
         $this->metrics->set('foo', 1.0, ['bar', 'baz']);
@@ -133,7 +137,7 @@ final class MetricsTest extends TestCase
 
         $this->rpc->expects($this->once())
             ->method('call')
-            ->with('metrics.Declare', ['name' => 'foo', 'collector' => $payload])
+            ->with('Declare', ['name' => 'foo', 'collector' => $payload])
             ->willReturn(null);
 
         $this->metrics->declare('foo', $collector);
@@ -175,7 +179,7 @@ final class MetricsTest extends TestCase
     {
         $this->rpc->expects($this->once())
             ->method('call')
-            ->with('metrics.Unregister', 'foo')
+            ->with('Unregister', 'foo')
             ->willReturn(null);
 
         $this->metrics->unregister('foo');

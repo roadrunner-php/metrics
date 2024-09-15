@@ -8,17 +8,21 @@ use Spiral\Goridge\RPC\AsyncRPCInterface;
 use Spiral\Goridge\RPC\Exception\ServiceException;
 use Spiral\RoadRunner\Metrics\Exception\MetricsException;
 
+/**
+ * @property AsyncRPCInterface $rpc
+ */
 class MetricsIgnoreResponse extends AbstractMetrics
 {
     public function __construct(
-        protected readonly AsyncRPCInterface $rpc
+        AsyncRPCInterface $rpc
     ) {
+        parent::__construct($rpc);
     }
 
     public function add(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->callIgnoreResponse('metrics.Add', compact('name', 'value', 'labels'));
+            $this->rpc->callIgnoreResponse('Add', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -27,7 +31,7 @@ class MetricsIgnoreResponse extends AbstractMetrics
     public function sub(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->callIgnoreResponse('metrics.Sub', compact('name', 'value', 'labels'));
+            $this->rpc->callIgnoreResponse('Sub', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -36,7 +40,7 @@ class MetricsIgnoreResponse extends AbstractMetrics
     public function observe(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->callIgnoreResponse('metrics.Observe', compact('name', 'value', 'labels'));
+            $this->rpc->callIgnoreResponse('Observe', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -45,7 +49,7 @@ class MetricsIgnoreResponse extends AbstractMetrics
     public function set(string $name, float $value, array $labels = []): void
     {
         try {
-            $this->rpc->callIgnoreResponse('metrics.Set', compact('name', 'value', 'labels'));
+            $this->rpc->callIgnoreResponse('Set', compact('name', 'value', 'labels'));
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }
@@ -54,7 +58,7 @@ class MetricsIgnoreResponse extends AbstractMetrics
     public function declare(string $name, CollectorInterface $collector): void
     {
         try {
-            $this->rpc->call('metrics.Declare', [
+            $this->rpc->call('Declare', [
                 'name' => $name,
                 'collector' => $collector->toArray(),
             ]);
@@ -71,7 +75,7 @@ class MetricsIgnoreResponse extends AbstractMetrics
     public function unregister(string $name): void
     {
         try {
-            $this->rpc->call('metrics.Unregister', $name);
+            $this->rpc->call('Unregister', $name);
         } catch (ServiceException $e) {
             throw new MetricsException($e->getMessage(), $e->getCode(), $e);
         }

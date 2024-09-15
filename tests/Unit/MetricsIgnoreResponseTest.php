@@ -6,10 +6,8 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use Spiral\Goridge\RPC\AsyncRPCInterface;
 use Spiral\Goridge\RPC\Exception\ServiceException;
-use Spiral\Goridge\RPC\RPCInterface;
 use Spiral\RoadRunner\Metrics\CollectorInterface;
 use Spiral\RoadRunner\Metrics\Exception\MetricsException;
-use Spiral\RoadRunner\Metrics\Metrics;
 use Spiral\RoadRunner\Metrics\MetricsIgnoreResponse;
 
 final class MetricsIgnoreResponseTest extends TestCase
@@ -22,6 +20,10 @@ final class MetricsIgnoreResponseTest extends TestCase
         parent::setUp();
 
         $this->rpc = $this->createMock(AsyncRPCInterface::class);
+        $this->rpc->expects($this->once())->method('withServicePrefix')
+            ->with('metrics')
+            ->willReturn($this->rpc);
+
         $this->metrics = new MetricsIgnoreResponse($this->rpc);
     }
 
@@ -29,7 +31,7 @@ final class MetricsIgnoreResponseTest extends TestCase
     {
         $this->rpc->expects($this->once())
             ->method('callIgnoreResponse')
-            ->with('metrics.Add', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']]);
+            ->with('Add', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']]);
 
         $this->metrics->add('foo', 1.0, ['bar', 'baz']);
     }
@@ -38,7 +40,7 @@ final class MetricsIgnoreResponseTest extends TestCase
     {
         $this->rpc->expects($this->once())
             ->method('callIgnoreResponse')
-            ->with('metrics.Sub', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']]);
+            ->with('Sub', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']]);
 
         $this->metrics->sub('foo', 1.0, ['bar', 'baz']);
     }
@@ -47,7 +49,7 @@ final class MetricsIgnoreResponseTest extends TestCase
     {
         $this->rpc->expects($this->once())
             ->method('callIgnoreResponse')
-            ->with('metrics.Observe', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']]);
+            ->with('Observe', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']]);
 
         $this->metrics->observe('foo', 1.0, ['bar', 'baz']);
     }
@@ -56,7 +58,7 @@ final class MetricsIgnoreResponseTest extends TestCase
     {
         $this->rpc->expects($this->once())
             ->method('callIgnoreResponse')
-            ->with('metrics.Set', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']]);
+            ->with('Set', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']]);
 
         $this->metrics->set('foo', 1.0, ['bar', 'baz']);
     }
@@ -70,7 +72,7 @@ final class MetricsIgnoreResponseTest extends TestCase
 
         $this->rpc->expects($this->once())
             ->method('call')
-            ->with('metrics.Declare', ['name' => 'foo', 'collector' => $payload])
+            ->with('Declare', ['name' => 'foo', 'collector' => $payload])
             ->willReturn(null);
 
         $this->metrics->declare('foo', $collector);
@@ -112,7 +114,7 @@ final class MetricsIgnoreResponseTest extends TestCase
     {
         $this->rpc->expects($this->once())
             ->method('call')
-            ->with('metrics.Unregister', 'foo')
+            ->with('Unregister', 'foo')
             ->willReturn(null);
 
         $this->metrics->unregister('foo');
