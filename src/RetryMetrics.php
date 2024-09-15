@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Spiral\RoadRunner\Metrics;
 
 use Spiral\RoadRunner\Metrics\Exception\MetricsException;
