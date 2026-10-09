@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Spiral\RoadRunner\Metrics\Tests\Unit;
 
 use Mockery\MockInterface;
+use Testo\Data\DataSet;
 use Testo\Lifecycle\BeforeTest;
 use Testo\Test;
 use Testo\Expect;
@@ -46,6 +47,24 @@ final class MetricsIgnoreResponseTest
         $this->rpc->shouldReceive('callIgnoreResponse')->once()->with('Set', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']], \Mockery::andAnyOtherArgs());
 
         $this->metrics->set('foo', 1.0, ['bar', 'baz']);
+    }
+
+    #[DataSet(['add', 'Add'], 'add')]
+    #[DataSet(['sub', 'Sub'], 'sub')]
+    #[DataSet(['observe', 'Observe'], 'observe')]
+    #[DataSet(['set', 'Set'], 'set')]
+    public function testCallIgnoreResponseWithError(string $method, string $rpcMethod): void
+    {
+        $e = new ServiceException('Something went wrong', 1);
+
+        Expect::exception(MetricsException::class)
+            ->withMessage($e->getMessage())
+            ->withCode($e->getCode())
+            ->withPrevious($e);
+
+        $this->rpc->shouldReceive('callIgnoreResponse')->once()->with($rpcMethod, \Mockery::andAnyOtherArgs())->andThrow($e);
+
+        $this->metrics->$method('foo', 1.0, ['bar', 'baz']);
     }
 
     public function testDeclare(): void

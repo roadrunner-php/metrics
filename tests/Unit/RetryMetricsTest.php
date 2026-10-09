@@ -182,6 +182,54 @@ final class RetryMetricsTest
         $retryMetrics->unregister('counter');
     }
 
+    public function testCallsOnceOnSuccess(): void
+    {
+        $metrics = \Mockery::mock(MetricsInterface::class);
+        $metrics->shouldReceive('add')->once()->with('counter', 1.0, ['label']);
+
+        $retryMetrics = new RetryMetrics($metrics, 3, 0);
+
+        $retryMetrics->add('counter', 1, ['label']);
+    }
+
+    public function testZeroRetryAttemptsCallsOnce(): void
+    {
+        $metrics = $this->createMetricsMock('add', 1, 1);
+
+        $retryMetrics = new RetryMetrics($metrics, 0, 0);
+
+        Expect::exception(MetricsException::class);
+
+        $retryMetrics->add('counter', 1);
+    }
+
+    public function testRethrowsLastMetricsException(): void
+    {
+        $metrics = \Mockery::mock(MetricsInterface::class);
+        $metrics->shouldReceive('add')->twice()->andThrowExceptions([
+            new MetricsException('first'),
+            new MetricsException('last'),
+        ]);
+
+        $retryMetrics = new RetryMetrics($metrics, 1, 0);
+
+        Expect::exception(MetricsException::class)->withMessage('last');
+
+        $retryMetrics->add('counter', 1);
+    }
+
+    public function testDoesNotRetryOtherExceptions(): void
+    {
+        $metrics = \Mockery::mock(MetricsInterface::class);
+        $metrics->shouldReceive('add')->once()->andThrow(new \RuntimeException('unexpected'));
+
+        $retryMetrics = new RetryMetrics($metrics, 3, 0);
+
+        Expect::exception(\RuntimeException::class)->withMessage('unexpected');
+
+        $retryMetrics->add('counter', 1);
+    }
+
     private function createMetricsMock(string $method, int $expectedCalls, int $exceptions): MetricsInterface
     {
         $metrics = \Mockery::mock(MetricsInterface::class)->shouldIgnoreMissing();

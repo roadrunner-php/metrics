@@ -10,6 +10,7 @@ use Testo\Test;
 use Testo\Expect;
 use Spiral\Goridge\RPC\Exception\ServiceException;
 use Spiral\Goridge\RPC\RPCInterface;
+use Spiral\RoadRunner\Metrics\Collector;
 use Spiral\RoadRunner\Metrics\CollectorInterface;
 use Spiral\RoadRunner\Metrics\Exception\MetricsException;
 use Spiral\RoadRunner\Metrics\Metrics;
@@ -36,6 +37,19 @@ final class MetricsTest
         $this->rpc->shouldReceive('call')->once()->andThrow($e);
 
         $this->metrics->add('foo', 1.0, ['bar', 'baz']);
+    }
+
+    public function testAddNegativeValueToCounterIsRejected(): void
+    {
+        $e = new ServiceException('counter cannot decrease in value', 1);
+
+        Expect::exception(MetricsException::class)
+            ->withMessage('counter cannot decrease in value')
+            ->withPrevious($e);
+
+        $this->rpc->shouldReceive('call')->once()->with('Add', ['name' => 'foo', 'value' => -1.0, 'labels' => []], \Mockery::andAnyOtherArgs())->andThrow($e);
+
+        $this->metrics->add('foo', -1.0);
     }
 
     public function testSub(): void
@@ -126,6 +140,25 @@ final class MetricsTest
         $this->rpc->shouldReceive('call')->once()->andThrow($e);
 
         $this->metrics->declare('foo', $collector);
+    }
+
+    public function testDeclarePassesCollectorDefinition(): void
+    {
+        $collector = Collector::histogram(0.1, 0.5)->withNamespace('app')->withHelp('Request duration')->withLabels('route');
+
+        $this->rpc->shouldReceive('call')->once()->with('Declare', [
+            'name' => 'duration',
+            'collector' => [
+                'namespace' => 'app',
+                'subsystem' => '',
+                'type' => 'histogram',
+                'help' => 'Request duration',
+                'labels' => ['route'],
+                'buckets' => [0.1, 0.5],
+            ],
+        ], \Mockery::andAnyOtherArgs())->andReturn(null);
+
+        $this->metrics->declare('duration', $collector);
     }
 
     public function testUnregister(): void
