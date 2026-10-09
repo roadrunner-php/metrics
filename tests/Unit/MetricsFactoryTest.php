@@ -8,7 +8,9 @@ use Testo\Assert;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 use Spiral\Goridge\RPC\AsyncRPCInterface;
+use Spiral\Goridge\RPC\Exception\ServiceException;
 use Spiral\Goridge\RPC\RPCInterface;
+use Spiral\RoadRunner\Metrics\Metrics;
 use Spiral\RoadRunner\Metrics\MetricsFactory;
 use Spiral\RoadRunner\Metrics\MetricsIgnoreResponse;
 use Spiral\RoadRunner\Metrics\MetricsOptions;
@@ -99,5 +101,31 @@ final class MetricsFactoryTest
 
         $factory = new MetricsFactory($logger);
         $factory->create($rpc, new MetricsOptions(ignoreResponsesWherePossible: false));
+    }
+
+    public function testSuppressedMetricsLogFailureAfterRetries(): void
+    {
+        $logger = \Mockery::mock(LoggerInterface::class);
+        $logger->shouldReceive('warning')->once()->with('[Metrics] Operation "Add" was failed: counter cannot decrease in value');
+
+        $rpc = \Mockery::mock(RPCInterface::class);
+        $rpc->shouldReceive('withServicePrefix')->with('metrics')->andReturnSelf();
+        $rpc->shouldReceive('call')->times(3)->andThrow(new ServiceException('counter cannot decrease in value'));
+
+        $metrics = (new MetricsFactory($logger))->create(
+            $rpc,
+            new MetricsOptions(retryAttempts: 2, retrySleepMicroseconds: 0, suppressExceptions: true),
+        );
+
+        $metrics->add('counter', -1);
+    }
+
+    public function testCreatesPlainMetricsWithoutDecorators(): void
+    {
+        $rpc = \Mockery::mock(RPCInterface::class)->shouldIgnoreMissing();
+
+        $metrics = MetricsFactory::createMetrics($rpc, new MetricsOptions(retryAttempts: 0));
+
+        Assert::same($metrics::class, Metrics::class);
     }
 }

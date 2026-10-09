@@ -52,6 +52,39 @@ final class CollectorTest
         Assert::same($collector->jsonSerialize(), $expected);
     }
 
+    public function testWithersKeepOriginalUnchanged(): void
+    {
+        $collector = Collector::summary();
+
+        $collector->withNamespace('test')->withSubsystem('subsystem')->withHelp('help')->withLabels('foo');
+
+        Assert::same($collector->toArray(), [
+            'namespace' => '',
+            'subsystem' => '',
+            'type' => 'summary',
+            'help' => '',
+            'labels' => [],
+            'buckets' => [],
+        ]);
+    }
+
+    public function testWithLabelsReplacesLabels(): void
+    {
+        $collector = Collector::counter()->withLabels('foo', 'bar')->withLabels('baz');
+
+        Assert::same($collector->toArray()['labels'], ['baz']);
+    }
+
+    public function testJsonEncode(): void
+    {
+        $collector = Collector::histogram(0.5, 1.5)->withNamespace('app')->withLabels('route');
+
+        Assert::same(
+            \json_encode($collector),
+            '{"namespace":"app","subsystem":"","type":"histogram","help":"","labels":["route"],"buckets":[0.5,1.5]}',
+        );
+    }
+
     public function testHistogram(): void
     {
         $collector = Collector::histogram(1.0, 2.0, 3.0);
