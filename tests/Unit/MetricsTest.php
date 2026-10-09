@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Spiral\RoadRunner\Metrics\Tests\Unit;
 
-use Mockery;
 use Mockery\MockInterface;
 use Testo\Lifecycle\BeforeTest;
 use Testo\Test;
@@ -21,18 +20,9 @@ final class MetricsTest
     private Metrics $metrics;
     private MockInterface|RPCInterface $rpc;
 
-    #[BeforeTest]
-    protected function setUp(): void
-    {
-        $this->rpc = Mockery::mock(RPCInterface::class)->shouldIgnoreMissing();
-        $this->rpc->shouldReceive('withServicePrefix')->once()->with('metrics', Mockery::andAnyOtherArgs())->andReturn($this->rpc);
-
-        $this->metrics = new Metrics($this->rpc);
-    }
-
     public function testAdd(): void
     {
-        $this->rpc->shouldReceive('call')->once()->with('Add', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']], Mockery::andAnyOtherArgs())->andReturn(null);
+        $this->rpc->shouldReceive('call')->once()->with('Add', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']], \Mockery::andAnyOtherArgs())->andReturn(null);
 
         $this->metrics->add('foo', 1.0, ['bar', 'baz']);
     }
@@ -50,7 +40,7 @@ final class MetricsTest
 
     public function testSub(): void
     {
-        $this->rpc->shouldReceive('call')->once()->with('Sub', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']], Mockery::andAnyOtherArgs())->andReturn(null);
+        $this->rpc->shouldReceive('call')->once()->with('Sub', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']], \Mockery::andAnyOtherArgs())->andReturn(null);
 
         $this->metrics->sub('foo', 1.0, ['bar', 'baz']);
     }
@@ -68,7 +58,7 @@ final class MetricsTest
 
     public function testObserve(): void
     {
-        $this->rpc->shouldReceive('call')->once()->with('Observe', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']], Mockery::andAnyOtherArgs())->andReturn(null);
+        $this->rpc->shouldReceive('call')->once()->with('Observe', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']], \Mockery::andAnyOtherArgs())->andReturn(null);
 
         $this->metrics->observe('foo', 1.0, ['bar', 'baz']);
     }
@@ -86,7 +76,7 @@ final class MetricsTest
 
     public function testSet(): void
     {
-        $this->rpc->shouldReceive('call')->once()->with('Set', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']], Mockery::andAnyOtherArgs())->andReturn(null);
+        $this->rpc->shouldReceive('call')->once()->with('Set', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']], \Mockery::andAnyOtherArgs())->andReturn(null);
 
         $this->metrics->set('foo', 1.0, ['bar', 'baz']);
     }
@@ -104,17 +94,17 @@ final class MetricsTest
 
     public function testDeclare(): void
     {
-        $collector = Mockery::mock(CollectorInterface::class)->shouldIgnoreMissing();
+        $collector = \Mockery::mock(CollectorInterface::class)->shouldIgnoreMissing();
         $collector->shouldReceive('toArray')->once()->andReturn($payload = ['foo' => 'bar']);
 
-        $this->rpc->shouldReceive('call')->once()->with('Declare', ['name' => 'foo', 'collector' => $payload], Mockery::andAnyOtherArgs())->andReturn(null);
+        $this->rpc->shouldReceive('call')->once()->with('Declare', ['name' => 'foo', 'collector' => $payload], \Mockery::andAnyOtherArgs())->andReturn(null);
 
         $this->metrics->declare('foo', $collector);
     }
 
     public function testDeclareWithError(): void
     {
-        $collector = Mockery::mock(CollectorInterface::class)->shouldIgnoreMissing();
+        $collector = \Mockery::mock(CollectorInterface::class)->shouldIgnoreMissing();
         $collector->shouldReceive('toArray')->andReturn(['foo' => 'bar']);
 
         $e = new ServiceException('Something went wrong', 1);
@@ -128,7 +118,7 @@ final class MetricsTest
 
     public function testDeclareWithSuppressedError(): void
     {
-        $collector = Mockery::mock(CollectorInterface::class)->shouldIgnoreMissing();
+        $collector = \Mockery::mock(CollectorInterface::class)->shouldIgnoreMissing();
         $collector->shouldReceive('toArray')->andReturn(['foo' => 'bar']);
 
         $e = new ServiceException('Something tried to register existing collector.', 1);
@@ -140,7 +130,7 @@ final class MetricsTest
 
     public function testUnregister(): void
     {
-        $this->rpc->shouldReceive('call')->once()->with('Unregister', 'foo', Mockery::andAnyOtherArgs())->andReturn(null);
+        $this->rpc->shouldReceive('call')->once()->with('Unregister', 'foo', \Mockery::andAnyOtherArgs())->andReturn(null);
 
         $this->metrics->unregister('foo');
     }
@@ -154,5 +144,14 @@ final class MetricsTest
         $this->rpc->shouldReceive('call')->once()->andThrow($e);
 
         $this->metrics->unregister('foo');
+    }
+
+    #[BeforeTest]
+    protected function setUp(): void
+    {
+        $this->rpc = \Mockery::mock(RPCInterface::class)->shouldIgnoreMissing();
+        $this->rpc->shouldReceive('withServicePrefix')->once()->with('metrics', \Mockery::andAnyOtherArgs())->andReturn($this->rpc);
+
+        $this->metrics = new Metrics($this->rpc);
     }
 }

@@ -13,7 +13,14 @@ class MetricsFactory
 {
     public function __construct(
         private readonly LoggerInterface $logger = new NullLogger(),
-    ) {
+    ) {}
+
+    public static function createMetrics(
+        RPCInterface    $rpc,
+        MetricsOptions  $options = new MetricsOptions(),
+        LoggerInterface $logger = new NullLogger(),
+    ): MetricsInterface {
+        return (new self($logger))->create($rpc, $options);
     }
 
     public function create(RPCInterface $rpc, MetricsOptions $options = new MetricsOptions()): MetricsInterface
@@ -43,14 +50,5 @@ class MetricsFactory
         }
 
         return $metrics;
-    }
-
-    public static function createMetrics(
-        RPCInterface    $rpc,
-        MetricsOptions  $options = new MetricsOptions(),
-        LoggerInterface $logger = new NullLogger()
-    ): MetricsInterface
-    {
-        return (new self($logger))->create($rpc, $options);
     }
 }
