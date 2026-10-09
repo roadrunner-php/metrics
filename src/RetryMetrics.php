@@ -16,37 +16,36 @@ class RetryMetrics implements MetricsInterface
         private readonly MetricsInterface $metrics,
         private readonly int $retryAttempts,
         private readonly int $retrySleepMicroseconds,
-    ) {
-    }
+    ) {}
 
     public function add(string $name, float $value, array $labels = []): void
     {
-        $this->retry(fn () => $this->metrics->add($name, $value, $labels));
+        $this->retry(fn() => $this->metrics->add($name, $value, $labels));
     }
 
     public function sub(string $name, float $value, array $labels = []): void
     {
-        $this->retry(fn () => $this->metrics->sub($name, $value, $labels));
+        $this->retry(fn() => $this->metrics->sub($name, $value, $labels));
     }
 
     public function observe(string $name, float $value, array $labels = []): void
     {
-        $this->retry(fn () => $this->metrics->observe($name, $value, $labels));
+        $this->retry(fn() => $this->metrics->observe($name, $value, $labels));
     }
 
     public function set(string $name, float $value, array $labels = []): void
     {
-        $this->retry(fn () => $this->metrics->set($name, $value, $labels));
+        $this->retry(fn() => $this->metrics->set($name, $value, $labels));
     }
 
     public function declare(string $name, CollectorInterface $collector): void
     {
-        $this->retry(fn () => $this->metrics->declare($name, $collector));
+        $this->retry(fn() => $this->metrics->declare($name, $collector));
     }
 
     public function unregister(string $name): void
     {
-        $this->retry(fn () => $this->metrics->unregister($name));
+        $this->retry(fn() => $this->metrics->unregister($name));
     }
 
     private function retry(callable $request): void

@@ -13,8 +13,7 @@ class SuppressExceptionsMetrics implements MetricsInterface
     public function __construct(
         private readonly MetricsInterface $metrics,
         private readonly LoggerInterface $logger = new NullLogger(),
-    ) {
-    }
+    ) {}
 
     public function add(string $name, float $value, array $labels = []): void
     {

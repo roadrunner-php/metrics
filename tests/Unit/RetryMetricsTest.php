@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Spiral\RoadRunner\Metrics\Tests\Unit;
 
-use Mockery;
 use Testo\Test;
 use Testo\Expect;
 use Spiral\RoadRunner\Metrics\Collector;
@@ -185,7 +184,7 @@ final class RetryMetricsTest
 
     private function createMetricsMock(string $method, int $expectedCalls, int $exceptions): MetricsInterface
     {
-        $metrics = Mockery::mock(MetricsInterface::class)->shouldIgnoreMissing();
+        $metrics = \Mockery::mock(MetricsInterface::class)->shouldIgnoreMissing();
 
         $returnValues = \array_fill(0, $exceptions, static fn() => throw new MetricsException());
         $returnValues[] = static fn() => null;

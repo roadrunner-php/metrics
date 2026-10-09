@@ -16,7 +16,6 @@ class MetricsOptions
         public readonly int $retryAttempts = 3,
         public readonly int $retrySleepMicroseconds = 50,
         public readonly bool $suppressExceptions = false,
-        public readonly bool $ignoreResponsesWherePossible = false
-    ) {
-    }
+        public readonly bool $ignoreResponsesWherePossible = false,
+    ) {}
 }

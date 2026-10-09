@@ -14,7 +14,7 @@ use Spiral\RoadRunner\Metrics\Exception\MetricsException;
 class MetricsIgnoreResponse extends AbstractMetrics
 {
     public function __construct(
-        AsyncRPCInterface $rpc
+        AsyncRPCInterface $rpc,
     ) {
         parent::__construct($rpc);
     }

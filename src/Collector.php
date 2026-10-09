@@ -5,24 +5,60 @@ declare(strict_types=1);
 namespace Spiral\RoadRunner\Metrics;
 
 use JetBrains\PhpStorm\Pure;
-use JsonSerializable;
 
 /**
  * @psalm-import-type ArrayFormatType from CollectorInterface
  */
-final class Collector implements CollectorInterface, JsonSerializable
+final class Collector implements CollectorInterface, \JsonSerializable
 {
     private string $namespace = '';
     private string $subsystem = '';
     private string $help = '';
+
     /** @var non-empty-string[] */
     private array $labels = [];
+
     /** @var float[] */
     private array $buckets = [];
 
     private function __construct(
         public readonly CollectorType $type,
-    ) {
+    ) {}
+
+    /**
+     * New histogram metric.
+     */
+    public static function histogram(float ...$bucket): self
+    {
+        $self = new self(CollectorType::Histogram);
+        /** @psalm-suppress ImpurePropertyAssignment */
+        $self->buckets = $bucket;
+
+        return $self;
+    }
+
+    /**
+     * New gauge metric.
+     */
+    public static function gauge(): self
+    {
+        return new self(CollectorType::Gauge);
+    }
+
+    /**
+     * New counter metric.
+     */
+    public static function counter(): self
+    {
+        return new self(CollectorType::Counter);
+    }
+
+    /**
+     * New summary metric.
+     */
+    public static function summary(): self
+    {
+        return new self(CollectorType::Summary);
     }
 
     #[Pure]
@@ -80,41 +116,5 @@ final class Collector implements CollectorInterface, JsonSerializable
     public function jsonSerialize(): array
     {
         return $this->toArray();
-    }
-
-    /**
-     * New histogram metric.
-     */
-    public static function histogram(float ...$bucket): self
-    {
-        $self = new self(CollectorType::Histogram);
-        /** @psalm-suppress ImpurePropertyAssignment */
-        $self->buckets = $bucket;
-
-        return $self;
-    }
-
-    /**
-     * New gauge metric.
-     */
-    public static function gauge(): self
-    {
-        return new self(CollectorType::Gauge);
-    }
-
-    /**
-     * New counter metric.
-     */
-    public static function counter(): self
-    {
-        return new self(CollectorType::Counter);
-    }
-
-    /**
-     * New summary metric.
-     */
-    public static function summary(): self
-    {
-        return new self(CollectorType::Summary);
     }
 }

@@ -8,12 +8,12 @@ use Spiral\Goridge\RPC\RPCInterface;
 
 abstract class AbstractMetrics implements MetricsInterface
 {
-    protected readonly RPCInterface $rpc;
-
-	/**
-	 * @var non-empty-string
-	 */
+    /**
+     * @var non-empty-string
+     */
     protected const SERVICE_NAME = 'metrics';
+
+    protected readonly RPCInterface $rpc;
 
     public function __construct(RPCInterface $rpc)
     {
