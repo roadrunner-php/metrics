@@ -4,36 +4,35 @@ declare(strict_types=1);
 
 namespace Spiral\RoadRunner\Metrics\Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
+use Mockery;
+use Mockery\MockInterface;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
+use Testo\Expect;
 use Spiral\Goridge\RPC\Exception\ServiceException;
 use Spiral\Goridge\RPC\RPCInterface;
 use Spiral\RoadRunner\Metrics\CollectorInterface;
 use Spiral\RoadRunner\Metrics\Exception\MetricsException;
 use Spiral\RoadRunner\Metrics\Metrics;
 
-final class MetricsTest extends TestCase
+#[Test]
+final class MetricsTest
 {
     private Metrics $metrics;
-    private \PHPUnit\Framework\MockObject\MockObject|RPCInterface $rpc;
+    private MockInterface|RPCInterface $rpc;
 
+    #[BeforeTest]
     protected function setUp(): void
     {
-        parent::setUp();
-
-        $this->rpc = $this->createMock(RPCInterface::class);
-        $this->rpc->expects($this->once())->method('withServicePrefix')
-            ->with('metrics')
-            ->willReturn($this->rpc);
+        $this->rpc = Mockery::mock(RPCInterface::class)->shouldIgnoreMissing();
+        $this->rpc->shouldReceive('withServicePrefix')->once()->with('metrics', Mockery::andAnyOtherArgs())->andReturn($this->rpc);
 
         $this->metrics = new Metrics($this->rpc);
     }
 
     public function testAdd(): void
     {
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->with('Add', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
-            ->willReturn(null);
+        $this->rpc->shouldReceive('call')->once()->with('Add', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']], Mockery::andAnyOtherArgs())->andReturn(null);
 
         $this->metrics->add('foo', 1.0, ['bar', 'baz']);
     }
@@ -42,23 +41,16 @@ final class MetricsTest extends TestCase
     {
         $e = new ServiceException('Something went wrong', 1);
 
-        $this->expectException(MetricsException::class);
-        $this->expectExceptionMessage($e->getMessage());
-        $this->expectExceptionCode($e->getCode());
+        Expect::exception(MetricsException::class)->withMessageContaining($e->getMessage())->withCode($e->getCode());
 
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->willThrowException($e);
+        $this->rpc->shouldReceive('call')->once()->andThrow($e);
 
         $this->metrics->add('foo', 1.0, ['bar', 'baz']);
     }
 
     public function testSub(): void
     {
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->with('Sub', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
-            ->willReturn(null);
+        $this->rpc->shouldReceive('call')->once()->with('Sub', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']], Mockery::andAnyOtherArgs())->andReturn(null);
 
         $this->metrics->sub('foo', 1.0, ['bar', 'baz']);
     }
@@ -67,23 +59,16 @@ final class MetricsTest extends TestCase
     {
         $e = new ServiceException('Something went wrong', 1);
 
-        $this->expectException(MetricsException::class);
-        $this->expectExceptionMessage($e->getMessage());
-        $this->expectExceptionCode($e->getCode());
+        Expect::exception(MetricsException::class)->withMessageContaining($e->getMessage())->withCode($e->getCode());
 
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->willThrowException($e);
+        $this->rpc->shouldReceive('call')->once()->andThrow($e);
 
         $this->metrics->sub('foo', 1.0, ['bar', 'baz']);
     }
 
     public function testObserve(): void
     {
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->with('Observe', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
-            ->willReturn(null);
+        $this->rpc->shouldReceive('call')->once()->with('Observe', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']], Mockery::andAnyOtherArgs())->andReturn(null);
 
         $this->metrics->observe('foo', 1.0, ['bar', 'baz']);
     }
@@ -92,23 +77,16 @@ final class MetricsTest extends TestCase
     {
         $e = new ServiceException('Something went wrong', 1);
 
-        $this->expectException(MetricsException::class);
-        $this->expectExceptionMessage($e->getMessage());
-        $this->expectExceptionCode($e->getCode());
+        Expect::exception(MetricsException::class)->withMessageContaining($e->getMessage())->withCode($e->getCode());
 
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->willThrowException($e);
+        $this->rpc->shouldReceive('call')->once()->andThrow($e);
 
         $this->metrics->observe('foo', 1.0, ['bar', 'baz']);
     }
 
     public function testSet(): void
     {
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->with('Set', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']])
-            ->willReturn(null);
+        $this->rpc->shouldReceive('call')->once()->with('Set', ['name' => 'foo', 'value' => 1.0, 'labels' => ['bar', 'baz']], Mockery::andAnyOtherArgs())->andReturn(null);
 
         $this->metrics->set('foo', 1.0, ['bar', 'baz']);
     }
@@ -117,70 +95,52 @@ final class MetricsTest extends TestCase
     {
         $e = new ServiceException('Something went wrong', 1);
 
-        $this->expectException(MetricsException::class);
-        $this->expectExceptionMessage($e->getMessage());
-        $this->expectExceptionCode($e->getCode());
+        Expect::exception(MetricsException::class)->withMessageContaining($e->getMessage())->withCode($e->getCode());
 
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->willThrowException($e);
+        $this->rpc->shouldReceive('call')->once()->andThrow($e);
 
         $this->metrics->set('foo', 1.0, ['bar', 'baz']);
     }
 
     public function testDeclare(): void
     {
-        $collector = $this->createMock(CollectorInterface::class);
-        $collector->expects($this->once())
-            ->method('toArray')
-            ->willReturn($payload = ['foo' => 'bar']);
+        $collector = Mockery::mock(CollectorInterface::class)->shouldIgnoreMissing();
+        $collector->shouldReceive('toArray')->once()->andReturn($payload = ['foo' => 'bar']);
 
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->with('Declare', ['name' => 'foo', 'collector' => $payload])
-            ->willReturn(null);
+        $this->rpc->shouldReceive('call')->once()->with('Declare', ['name' => 'foo', 'collector' => $payload], Mockery::andAnyOtherArgs())->andReturn(null);
 
         $this->metrics->declare('foo', $collector);
     }
 
     public function testDeclareWithError(): void
     {
-        $collector = $this->createMock(CollectorInterface::class);
-        $collector->method('toArray')->willReturn(['foo' => 'bar']);
+        $collector = Mockery::mock(CollectorInterface::class)->shouldIgnoreMissing();
+        $collector->shouldReceive('toArray')->andReturn(['foo' => 'bar']);
 
         $e = new ServiceException('Something went wrong', 1);
 
-        $this->expectException(MetricsException::class);
-        $this->expectExceptionMessage($e->getMessage());
-        $this->expectExceptionCode($e->getCode());
+        Expect::exception(MetricsException::class)->withMessageContaining($e->getMessage())->withCode($e->getCode());
 
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->willThrowException($e);
+        $this->rpc->shouldReceive('call')->once()->andThrow($e);
 
         $this->metrics->declare('foo', $collector);
     }
 
     public function testDeclareWithSuppressedError(): void
     {
-        $collector = $this->createMock(CollectorInterface::class);
-        $collector->method('toArray')->willReturn(['foo' => 'bar']);
+        $collector = Mockery::mock(CollectorInterface::class)->shouldIgnoreMissing();
+        $collector->shouldReceive('toArray')->andReturn(['foo' => 'bar']);
 
         $e = new ServiceException('Something tried to register existing collector.', 1);
 
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->willThrowException($e);
+        $this->rpc->shouldReceive('call')->once()->andThrow($e);
 
         $this->metrics->declare('foo', $collector);
     }
 
     public function testUnregister(): void
     {
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->with('Unregister', 'foo')
-            ->willReturn(null);
+        $this->rpc->shouldReceive('call')->once()->with('Unregister', 'foo', Mockery::andAnyOtherArgs())->andReturn(null);
 
         $this->metrics->unregister('foo');
     }
@@ -189,13 +149,9 @@ final class MetricsTest extends TestCase
     {
         $e = new ServiceException('Something went wrong', 1);
 
-        $this->expectException(MetricsException::class);
-        $this->expectExceptionMessage($e->getMessage());
-        $this->expectExceptionCode($e->getCode());
+        Expect::exception(MetricsException::class)->withMessageContaining($e->getMessage())->withCode($e->getCode());
 
-        $this->rpc->expects($this->once())
-            ->method('call')
-            ->willThrowException($e);
+        $this->rpc->shouldReceive('call')->once()->andThrow($e);
 
         $this->metrics->unregister('foo');
     }
