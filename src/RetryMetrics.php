@@ -18,31 +18,37 @@ class RetryMetrics implements MetricsInterface
         private readonly int $retrySleepMicroseconds,
     ) {}
 
+    #[\Override]
     public function add(string $name, float $value, array $labels = []): void
     {
         $this->retry(fn() => $this->metrics->add($name, $value, $labels));
     }
 
+    #[\Override]
     public function sub(string $name, float $value, array $labels = []): void
     {
         $this->retry(fn() => $this->metrics->sub($name, $value, $labels));
     }
 
+    #[\Override]
     public function observe(string $name, float $value, array $labels = []): void
     {
         $this->retry(fn() => $this->metrics->observe($name, $value, $labels));
     }
 
+    #[\Override]
     public function set(string $name, float $value, array $labels = []): void
     {
         $this->retry(fn() => $this->metrics->set($name, $value, $labels));
     }
 
+    #[\Override]
     public function declare(string $name, CollectorInterface $collector): void
     {
         $this->retry(fn() => $this->metrics->declare($name, $collector));
     }
 
+    #[\Override]
     public function unregister(string $name): void
     {
         $this->retry(fn() => $this->metrics->unregister($name));

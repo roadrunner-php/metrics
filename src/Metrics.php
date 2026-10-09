@@ -9,6 +9,7 @@ use Spiral\RoadRunner\Metrics\Exception\MetricsException;
 
 class Metrics extends AbstractMetrics
 {
+    #[\Override]
     public function add(string $name, float $value, array $labels = []): void
     {
         try {
@@ -18,6 +19,7 @@ class Metrics extends AbstractMetrics
         }
     }
 
+    #[\Override]
     public function sub(string $name, float $value, array $labels = []): void
     {
         try {
@@ -27,6 +29,7 @@ class Metrics extends AbstractMetrics
         }
     }
 
+    #[\Override]
     public function observe(string $name, float $value, array $labels = []): void
     {
         try {
@@ -36,6 +39,7 @@ class Metrics extends AbstractMetrics
         }
     }
 
+    #[\Override]
     public function set(string $name, float $value, array $labels = []): void
     {
         try {
@@ -45,6 +49,7 @@ class Metrics extends AbstractMetrics
         }
     }
 
+    #[\Override]
     public function declare(string $name, CollectorInterface $collector): void
     {
         try {
@@ -62,6 +67,7 @@ class Metrics extends AbstractMetrics
         }
     }
 
+    #[\Override]
     public function unregister(string $name): void
     {
         try {
