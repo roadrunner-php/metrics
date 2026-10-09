@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Spiral\RoadRunner\Metrics\Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
+use Mockery;
+use Testo\Test;
+use Testo\Expect;
 use Spiral\RoadRunner\Metrics\Collector;
 use Spiral\RoadRunner\Metrics\Exception\MetricsException;
 use Spiral\RoadRunner\Metrics\MetricsInterface;
 use Spiral\RoadRunner\Metrics\RetryMetrics;
 
-final class RetryMetricsTest extends TestCase
+#[Test]
+final class RetryMetricsTest
 {
     public function testAddWithMetricsException(): void
     {
@@ -22,7 +25,7 @@ final class RetryMetricsTest extends TestCase
             1,
         );
 
-        $this->expectException(MetricsException::class);
+        Expect::exception(MetricsException::class);
 
         $retryMetrics->add('counter', 1);
     }
@@ -50,7 +53,7 @@ final class RetryMetricsTest extends TestCase
             1,
         );
 
-        $this->expectException(MetricsException::class);
+        Expect::exception(MetricsException::class);
 
         $retryMetrics->sub('counter', 1);
     }
@@ -78,7 +81,7 @@ final class RetryMetricsTest extends TestCase
             1,
         );
 
-        $this->expectException(MetricsException::class);
+        Expect::exception(MetricsException::class);
 
         $retryMetrics->observe('counter', 1);
     }
@@ -106,7 +109,7 @@ final class RetryMetricsTest extends TestCase
             1,
         );
 
-        $this->expectException(MetricsException::class);
+        Expect::exception(MetricsException::class);
 
         $retryMetrics->set('counter', 1);
     }
@@ -134,7 +137,7 @@ final class RetryMetricsTest extends TestCase
             1,
         );
 
-        $this->expectException(MetricsException::class);
+        Expect::exception(MetricsException::class);
 
         $retryMetrics->declare('counter', Collector::counter());
     }
@@ -162,7 +165,7 @@ final class RetryMetricsTest extends TestCase
             1,
         );
 
-        $this->expectException(MetricsException::class);
+        Expect::exception(MetricsException::class);
 
         $retryMetrics->unregister('counter');
     }
@@ -182,15 +185,12 @@ final class RetryMetricsTest extends TestCase
 
     private function createMetricsMock(string $method, int $expectedCalls, int $exceptions): MetricsInterface
     {
-        $metrics = $this->createMock(MetricsInterface::class);
+        $metrics = Mockery::mock(MetricsInterface::class)->shouldIgnoreMissing();
 
-        $returnValues = \array_fill(0, $exceptions, $this->throwException(new MetricsException()));
-        $returnValues[] = null;
+        $returnValues = \array_fill(0, $exceptions, static fn() => throw new MetricsException());
+        $returnValues[] = static fn() => null;
 
-        $metrics
-            ->expects($this->exactly($expectedCalls))
-            ->method($method)
-            ->willReturnOnConsecutiveCalls(...$returnValues);
+        $metrics->shouldReceive($method)->times($expectedCalls)->andReturnUsing(...$returnValues);
 
         return $metrics;
     }

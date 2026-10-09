@@ -2,8 +2,11 @@
 
 namespace Spiral\RoadRunner\Metrics\Tests\Unit;
 
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Mockery;
+use Testo\Test;
+use Testo\Data\DataProvider;
+use Testo\Assert;
+use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 use Spiral\Goridge\RPC\AsyncRPCInterface;
 use Spiral\Goridge\RPC\RPCInterface;
@@ -13,39 +16,35 @@ use Spiral\RoadRunner\Metrics\MetricsOptions;
 use Spiral\RoadRunner\Metrics\RetryMetrics;
 use Spiral\RoadRunner\Metrics\SuppressExceptionsMetrics;
 
-final class MetricsFactoryTest extends TestCase
+#[Test]
+final class MetricsFactoryTest
 {
-    /**
-     * @dataProvider providerForTestCreate
-     */
+    #[DataProvider('providerForTestCreate')]
     public function testCreate(MetricsOptions $options, string $expectedClass, string $rpcInterfaceClass): void
     {
         $factory = new MetricsFactory();
 
-        /** @var MockObject&RPCInterface $rpc */
-        $rpc = $this->createMock($rpcInterfaceClass);
+        /** @var MockInterface&RPCInterface $rpc */
+        $rpc = Mockery::mock($rpcInterfaceClass)->shouldIgnoreMissing();
 
-        self::assertInstanceOf($expectedClass, $factory->create($rpc, $options));
+        Assert::instanceOf($factory->create($rpc, $options), $expectedClass);
     }
 
-    /**
-     * @dataProvider providerForTestCreate
-     */
+    #[DataProvider('providerForTestCreate')]
     public function testCreateStatic(MetricsOptions $options, string $expectedClass, string $rpcInterfaceClass): void
     {
-        /** @var MockObject&RPCInterface $rpc */
-        $rpc = $this->createMock($rpcInterfaceClass);
+        /** @var MockInterface&RPCInterface $rpc */
+        $rpc = Mockery::mock($rpcInterfaceClass)->shouldIgnoreMissing();
 
-        self::assertInstanceOf($expectedClass, MetricsFactory::createMetrics($rpc, $options));
+        Assert::instanceOf(MetricsFactory::createMetrics($rpc, $options), $expectedClass);
     }
 
     public function testLogsIfIgnoreResponseButNoAsyncRPCInterface(): void
     {
-        $logger = $this->createMock(LoggerInterface::class);
-        $logger->expects($this->once())->method('warning')
-            ->with('ignoreResponsesWherePossible is true but no AsyncRPCInterface provided');
+        $logger = Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
+        $logger->shouldReceive('warning')->once()->with('ignoreResponsesWherePossible is true but no AsyncRPCInterface provided', Mockery::andAnyOtherArgs());
 
-        $rpc = $this->createMock(RPCInterface::class);
+        $rpc = Mockery::mock(RPCInterface::class)->shouldIgnoreMissing();
 
         $factory = new MetricsFactory($logger);
         $factory->create($rpc, new MetricsOptions(ignoreResponsesWherePossible: true));
@@ -53,11 +52,10 @@ final class MetricsFactoryTest extends TestCase
 
     public function testLogsIfAsyncRPCInterfaceButNoIgnoreResponses(): void
     {
-        $logger = $this->createMock(LoggerInterface::class);
-        $logger->expects($this->once())->method('warning')
-            ->with('ignoreResponsesWherePossible is false but an AsyncRPCInterface was provided');
+        $logger = Mockery::mock(LoggerInterface::class)->shouldIgnoreMissing();
+        $logger->shouldReceive('warning')->once()->with('ignoreResponsesWherePossible is false but an AsyncRPCInterface was provided', Mockery::andAnyOtherArgs());
 
-        $rpc = $this->createMock(AsyncRPCInterface::class);
+        $rpc = Mockery::mock(AsyncRPCInterface::class)->shouldIgnoreMissing();
 
         $factory = new MetricsFactory($logger);
         $factory->create($rpc, new MetricsOptions(ignoreResponsesWherePossible: false));

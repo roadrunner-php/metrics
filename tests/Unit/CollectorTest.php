@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Spiral\RoadRunner\Metrics\Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
+use Testo\Test;
+use Testo\Assert;
 use Spiral\RoadRunner\Metrics\Collector;
 use Spiral\RoadRunner\Metrics\CollectorType;
 
-final class CollectorTest extends TestCase
+#[Test]
+final class CollectorTest
 {
     public function testToArray(): void
     {
@@ -27,7 +29,7 @@ final class CollectorTest extends TestCase
             'buckets' => [1.0, 2.0, 3.0],
         ];
 
-        $this->assertSame($expected, $collector->toArray());
+        Assert::same($collector->toArray(), $expected);
     }
 
     public function testJsonSerialize(): void
@@ -47,39 +49,39 @@ final class CollectorTest extends TestCase
             'buckets' => [],
         ];
 
-        $this->assertSame($expected, $collector->jsonSerialize());
+        Assert::same($collector->jsonSerialize(), $expected);
     }
 
     public function testHistogram(): void
     {
         $collector = Collector::histogram(1.0, 2.0, 3.0);
 
-        $this->assertSame(CollectorType::Histogram, $collector->type);
-        $this->assertSame([1.0, 2.0, 3.0], $collector->toArray()['buckets']);
+        Assert::same($collector->type, CollectorType::Histogram);
+        Assert::same($collector->toArray()['buckets'], [1.0, 2.0, 3.0]);
     }
 
     public function testGauge(): void
     {
         $collector = Collector::gauge();
 
-        $this->assertSame(CollectorType::Gauge, $collector->type);
-        $this->assertSame([], $collector->toArray()['buckets']);
+        Assert::same($collector->type, CollectorType::Gauge);
+        Assert::same($collector->toArray()['buckets'], []);
     }
 
     public function testCounter(): void
     {
         $collector = Collector::counter();
 
-        $this->assertSame(CollectorType::Counter, $collector->type);
-        $this->assertSame([], $collector->toArray()['buckets']);
+        Assert::same($collector->type, CollectorType::Counter);
+        Assert::same($collector->toArray()['buckets'], []);
     }
 
     public function testSummary(): void
     {
         $collector = Collector::summary();
 
-        $this->assertSame(CollectorType::Summary, $collector->type);
-        $this->assertSame([], $collector->toArray()['buckets']);
+        Assert::same($collector->type, CollectorType::Summary);
+        Assert::same($collector->toArray()['buckets'], []);
     }
 
     public function testWithNamespace(): void
@@ -87,8 +89,8 @@ final class CollectorTest extends TestCase
         $collector = Collector::counter();
 
         $newCollector = $collector->withNamespace('test');
-        $this->assertNotSame($collector, $newCollector);
-        $this->assertSame('test', $newCollector->toArray()['namespace']);
+        Assert::notSame($newCollector, $collector);
+        Assert::same($newCollector->toArray()['namespace'], 'test');
     }
 
     public function testWithSubsystem(): void
@@ -96,8 +98,8 @@ final class CollectorTest extends TestCase
         $collector = Collector::gauge();
 
         $newCollector = $collector->withSubsystem('subsystem');
-        $this->assertNotSame($collector, $newCollector);
-        $this->assertSame('subsystem', $newCollector->toArray()['subsystem']);
+        Assert::notSame($newCollector, $collector);
+        Assert::same($newCollector->toArray()['subsystem'], 'subsystem');
     }
 
     public function testWithHelp(): void
@@ -105,8 +107,8 @@ final class CollectorTest extends TestCase
         $collector = Collector::histogram(1.0, 2.0, 3.0);
 
         $newCollector = $collector->withHelp('help');
-        $this->assertNotSame($collector, $newCollector);
-        $this->assertSame('help', $newCollector->toArray()['help']);
+        Assert::notSame($newCollector, $collector);
+        Assert::same($newCollector->toArray()['help'], 'help');
     }
 
     public function testWithLabels(): void
@@ -114,7 +116,7 @@ final class CollectorTest extends TestCase
         $collector = Collector::counter();
 
         $newCollector = $collector->withLabels('foo', 'bar');
-        $this->assertNotSame($collector, $newCollector);
-        $this->assertSame(['foo', 'bar'], $newCollector->toArray()['labels']);
+        Assert::notSame($newCollector, $collector);
+        Assert::same($newCollector->toArray()['labels'], ['foo', 'bar']);
     }
 }
