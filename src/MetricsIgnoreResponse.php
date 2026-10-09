@@ -19,6 +19,7 @@ class MetricsIgnoreResponse extends AbstractMetrics
         parent::__construct($rpc);
     }
 
+    #[\Override]
     public function add(string $name, float $value, array $labels = []): void
     {
         try {
@@ -28,6 +29,7 @@ class MetricsIgnoreResponse extends AbstractMetrics
         }
     }
 
+    #[\Override]
     public function sub(string $name, float $value, array $labels = []): void
     {
         try {
@@ -37,6 +39,7 @@ class MetricsIgnoreResponse extends AbstractMetrics
         }
     }
 
+    #[\Override]
     public function observe(string $name, float $value, array $labels = []): void
     {
         try {
@@ -46,6 +49,7 @@ class MetricsIgnoreResponse extends AbstractMetrics
         }
     }
 
+    #[\Override]
     public function set(string $name, float $value, array $labels = []): void
     {
         try {
@@ -55,6 +59,7 @@ class MetricsIgnoreResponse extends AbstractMetrics
         }
     }
 
+    #[\Override]
     public function declare(string $name, CollectorInterface $collector): void
     {
         try {
@@ -72,6 +77,7 @@ class MetricsIgnoreResponse extends AbstractMetrics
         }
     }
 
+    #[\Override]
     public function unregister(string $name): void
     {
         try {

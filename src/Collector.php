@@ -61,6 +61,7 @@ final class Collector implements CollectorInterface, \JsonSerializable
         return new self(CollectorType::Summary);
     }
 
+    #[\Override]
     #[Pure]
     public function withNamespace(string $namespace): self
     {
@@ -70,6 +71,7 @@ final class Collector implements CollectorInterface, \JsonSerializable
         return $self;
     }
 
+    #[\Override]
     #[Pure]
     public function withSubsystem(string $subsystem): self
     {
@@ -79,6 +81,7 @@ final class Collector implements CollectorInterface, \JsonSerializable
         return $self;
     }
 
+    #[\Override]
     #[Pure]
     public function withHelp(string $help): self
     {
@@ -88,6 +91,7 @@ final class Collector implements CollectorInterface, \JsonSerializable
         return $self;
     }
 
+    #[\Override]
     #[Pure]
     public function withLabels(string ...$label): self
     {
@@ -97,6 +101,7 @@ final class Collector implements CollectorInterface, \JsonSerializable
         return $self;
     }
 
+    #[\Override]
     #[Pure]
     public function toArray(): array
     {
@@ -113,6 +118,7 @@ final class Collector implements CollectorInterface, \JsonSerializable
     /**
      * @return ArrayFormatType
      */
+    #[\Override]
     public function jsonSerialize(): array
     {
         return $this->toArray();
