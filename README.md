@@ -28,19 +28,19 @@ It lets application workers declare Prometheus collectors and publish values to 
 ### Installation
 
 ```bash
-composer require spiral/roadrunner-metrics
+composer require roadrunner/metrics
 ```
 
-[![PHP](https://img.shields.io/packagist/php-v/spiral/roadrunner-metrics.svg?style=flat-square&logo=php)](https://packagist.org/packages/spiral/roadrunner-metrics)
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/spiral/roadrunner-metrics.svg?style=flat-square&logo=packagist)](https://packagist.org/packages/spiral/roadrunner-metrics)
-[![License](https://img.shields.io/packagist/l/spiral/roadrunner-metrics.svg?style=flat-square)](LICENSE)
-[![Total Downloads](https://img.shields.io/packagist/dt/spiral/roadrunner-metrics.svg?style=flat-square)](https://packagist.org/packages/spiral/roadrunner-metrics/stats)
+[![PHP](https://img.shields.io/packagist/php-v/roadrunner/metrics.svg?style=flat-square&logo=php)](https://packagist.org/packages/roadrunner/metrics)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/roadrunner/metrics.svg?style=flat-square&logo=packagist)](https://packagist.org/packages/roadrunner/metrics)
+[![License](https://img.shields.io/packagist/l/roadrunner/metrics.svg?style=flat-square)](LICENSE)
+[![Total Downloads](https://img.shields.io/packagist/dt/roadrunner/metrics.svg?style=flat-square)](https://packagist.org/packages/roadrunner/metrics/stats)
 
 The package requires PHP 8.2+ and RoadRunner v3.
 You can use the convenient installer to download the latest available compatible version of RoadRunner assembly:
 
 ```bash
-composer require spiral/roadrunner-cli --dev
+composer require roadrunner/cli --dev
 vendor/bin/rr get
 ```
 
