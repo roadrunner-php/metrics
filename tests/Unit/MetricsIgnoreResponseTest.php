@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Spiral\RoadRunner\Metrics\Tests\Unit;
 
 use Mockery\MockInterface;
-use Testo\Data\DataSet;
-use Testo\Lifecycle\BeforeTest;
-use Testo\Test;
-use Testo\Expect;
 use Spiral\Goridge\RPC\AsyncRPCInterface;
 use Spiral\Goridge\RPC\Exception\ServiceException;
 use Spiral\RoadRunner\Metrics\CollectorInterface;
 use Spiral\RoadRunner\Metrics\Exception\MetricsException;
 use Spiral\RoadRunner\Metrics\MetricsIgnoreResponse;
+use Testo\Data\DataSet;
+use Testo\Expect;
+use Testo\Lifecycle\BeforeTest;
+use Testo\Test;
 
 #[Test]
 final class MetricsIgnoreResponseTest

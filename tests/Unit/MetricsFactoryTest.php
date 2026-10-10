@@ -2,9 +2,6 @@
 
 namespace Spiral\RoadRunner\Metrics\Tests\Unit;
 
-use Testo\Test;
-use Testo\Data\DataProvider;
-use Testo\Assert;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 use Spiral\Goridge\RPC\AsyncRPCInterface;
@@ -16,6 +13,9 @@ use Spiral\RoadRunner\Metrics\MetricsIgnoreResponse;
 use Spiral\RoadRunner\Metrics\MetricsOptions;
 use Spiral\RoadRunner\Metrics\RetryMetrics;
 use Spiral\RoadRunner\Metrics\SuppressExceptionsMetrics;
+use Testo\Assert;
+use Testo\Data\DataProvider;
+use Testo\Test;
 
 #[Test]
 final class MetricsFactoryTest

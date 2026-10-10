@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Spiral\RoadRunner\Metrics\Tests\Unit;
 
-use Testo\Test;
-use Testo\Expect;
 use Spiral\RoadRunner\Metrics\Collector;
 use Spiral\RoadRunner\Metrics\Exception\MetricsException;
 use Spiral\RoadRunner\Metrics\MetricsInterface;
 use Spiral\RoadRunner\Metrics\RetryMetrics;
+use Testo\Expect;
+use Testo\Test;
 
 #[Test]
 final class RetryMetricsTest

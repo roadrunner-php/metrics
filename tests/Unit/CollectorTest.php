@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Spiral\RoadRunner\Metrics\Tests\Unit;
 
-use Testo\Test;
-use Testo\Assert;
 use Spiral\RoadRunner\Metrics\Collector;
 use Spiral\RoadRunner\Metrics\CollectorType;
+use Testo\Assert;
+use Testo\Test;
 
 #[Test]
 final class CollectorTest
