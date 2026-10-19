@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.1](https://github.com/roadrunner-php/metrics/compare/3.4.0...3.4.1) (2026-10-19)
+
+
+### Bug Fixes
+
+* require roadrunner/roadrunner instead of spiral/roadrunner ([e4786e5](https://github.com/roadrunner-php/metrics/commit/e4786e55b474763b482a7d461fe7fb5fe5988f91))
+
 ## [3.4.0](https://github.com/roadrunner-php/metrics/compare/3.3.0...3.4.0) (2026-10-10)
 
 
