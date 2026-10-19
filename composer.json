@@ -54,7 +54,7 @@
         "php": ">=8.2",
         "psr/log": "^2.0 || ^3.0",
         "roadrunner/goridge": "^4.5",
-        "spiral/roadrunner": "^3.0"
+        "roadrunner/roadrunner": "^3.0"
     },
     "require-dev": {
         "jetbrains/phpstorm-attributes": "^1.0",
